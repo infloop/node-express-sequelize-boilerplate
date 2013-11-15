@@ -1,0 +1,32 @@
+{
+	"name" : "node-express-sequelize-boilerplate",
+	"description": "node-express-sequelize-boilerplate",
+	"private": true,
+	"keywords" : [
+		"express",
+		"mysql",
+		"passport",
+		"sequelize"
+	],
+	"version": "0.0.1",
+	"author": "Jhon Cruz (https://github.com/jacruzca)",
+	"scripts": {
+		"start": "NODE_ENV=development ./node_modules/.bin/nodemon server.js",
+		"test": "NODE_ENV=test ./node_modules/.bin/mocha --reporter spec test/**/*.js"
+	},
+	"dependencies": {
+	    "express": "latest",
+	    "passport": "latest",
+	    "passport-local": "latest",
+	    "sequelize": "latest",
+	    "mysql": "latest",
+	    "winston": "latest"  
+  	},
+  	"devDependencies": {
+  		"sqlite3": "latest",
+	    "should": "latest",
+	    "mocha": "latest",
+	    "rewire": "latest",
+	    "nodemon": "latest"
+  	}
+}
