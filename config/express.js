@@ -2,28 +2,43 @@ var express = require('express');
 var logger = require("./logger");
 
 
-module.exports = function (app, config) {
+module.exports = function (app, config, passport) {
 	
 	// don't use logger for test env
 	if (process.env.NODE_ENV !== 'test') {
 		app.use(express.logger('dev'))
 	}
 
-	app.use(function(req, res, next) {
-	  res.type('application/json');
-	  next();
-	});
+	// should be placed before express.static
+	app.use(express.compress({
+		filter: function (req, res) {
+		  return /json|text|javascript|css/.test(res.getHeader('Content-Type'))
+		},
+		level: 9
+	}))
+
+	app.use(express.favicon())
+	app.use(express.static(config.root + '/public'))
+
+	// set views path, template engine and default layout
+	app.set('views', config.root + '/app/view')
+	app.set('view engine', 'ejs')
 
 	app.configure(function () {
 
 		// cookieParser should be above session
 		app.use(express.cookieParser());
+		app.use(express.session({secret: "This is a secret"}));
 
 		//bodyParser
 		app.use(express.json());
 		app.use(express.urlencoded());
 
 		app.use(express.methodOverride());
+
+		// use passport session
+	    app.use(passport.initialize())
+	    app.use(passport.session())
 
 		// routes should be at the last
 		app.use(app.router);

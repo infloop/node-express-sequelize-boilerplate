@@ -1,6 +1,11 @@
+
+var path = require('path');
+var rootPath = path.normalize(__dirname + '/..');
+
 module.exports = {
   development: {
     loggerLevel: "debug",
+    root: rootPath,
     db: {
       host: "localhost",
       port: "3306",
@@ -16,6 +21,7 @@ module.exports = {
   },
   test: {
     loggerLevel: "info",
+    root: rootPath,
     db: {
       dialect: "sqlite"
     },

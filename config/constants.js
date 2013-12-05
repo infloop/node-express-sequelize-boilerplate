@@ -1,5 +1,6 @@
 module.exports = {
 	routes : {
-		users: "users"
+		users: "api/users",
+		login: "api/users/login"
 	}
 }

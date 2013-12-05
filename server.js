@@ -1,4 +1,5 @@
 var express = require("express");
+var passport = require('passport');
 
 //logging config
 var logger = require("./config/logger");
@@ -15,11 +16,14 @@ app.set("models", require("./app/model"));
 //set some global constants
 app.set("constants", require("./config/constants"));
 
+//bootstrap auth strategies
+require("./app/auth/")(passport, config, app);
+
 // express settings
-require('./config/express')(app, config);
+require('./config/express')(app, config, passport);
 
 // Bootstrap routes
-require('./app/route')(app);
+require('./app/route')(app, passport);
 
 //start app on mentioned port
 app.listen(config.app.port);

@@ -4,6 +4,6 @@ var constants = require("../../config/constants");
 /**
  * This method returns the user repository
  */
-module.exports.getUserRepository = function(req){
-	return require("../repository/UserRepository")(req.app.get("models").User);
+module.exports.getUserRepository = function(app){
+	return require("../repository/UserRepository")(app.get("models").User);
 };
