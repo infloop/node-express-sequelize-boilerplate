@@ -22,7 +22,8 @@
 	    "passport-local": "latest",
 	    "sequelize": "latest",
 	    "mysql": "latest",
-	    "winston": "latest"  
+	    "winston": "latest",
+	    "randomstring": "latest"
   	},
   	"devDependencies": {
   		"sqlite3": "latest",

@@ -3,6 +3,7 @@
  */
 var constants = require("../../config/constants");
 var userBusiness = require("../business/UserBusiness");
+var authorization = require("../auth/Authorization");
 
 /**
  * Following are the routes for users
@@ -15,12 +16,14 @@ module.exports = function (app, passport) {
 			userBusiness.all);
 
 	app.put("/"+constants.routes.users,
-			userBusiness.create)
+			userBusiness.create);
+
 
 	app.post("/"+constants.routes.login, 
-			passport.authenticate('local', {
-		      failureRedirect: '/login',
-		    }),
-		    userBusiness.doLogin);
+			passport.authenticate('local', { session: false }),
+			userBusiness.doLogin);
+
+	app.get("/"+constants.routes.logout,
+			userBusiness.doLogout);
 
 };

@@ -29,7 +29,7 @@ describe('UserBusiness', function () {
 			    render: function(view, viewData) {
 			        view.should.equal(constants.routes.users);
 			    },
-			    send: function(result){
+			    json: function(result){
 			    	result.should.equal(expectedResult);
 			    },
 			    status: function(status){
@@ -89,7 +89,7 @@ describe('UserBusiness', function () {
 			    	status.should.equal(expectedStatus);
 			    	return this;
 			    },
-			    send: function(result){
+			    json: function(result){
 			    	result.should.equal(expectedResult);
 			    	done();
 			    }

@@ -1,6 +1,8 @@
 var express = require('express');
 var logger = require("./logger");
-
+// Load configurations according to the selected environment
+var env = process.env.NODE_ENV || 'development';
+var config = require('./config')[env];
 
 module.exports = function (app, config, passport) {
 	
@@ -27,7 +29,7 @@ module.exports = function (app, config, passport) {
 	app.configure(function () {
 
 		// cookieParser should be above session
-		app.use(express.cookieParser());
+		app.use(express.cookieParser(config.app.cookieSecret));
 		app.use(express.session({secret: "This is a secret"}));
 
 		//bodyParser
@@ -38,7 +40,7 @@ module.exports = function (app, config, passport) {
 
 		// use passport session
 	    app.use(passport.initialize())
-	    app.use(passport.session())
+	    //app.use(passport.session())
 
 		// routes should be at the last
 		app.use(app.router);

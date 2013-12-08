@@ -10,10 +10,24 @@ module.exports = function (passport, config, app) {
 
 		function(username, password, done) {
 
-			logger.debug("LocalStrategy - init");
-
 			var userRepository = repositoryFactory.getUserRepository(app);
+			var userTokenRepository = repositoryFactory.getUserTokenRepository(app);
 
+			//local variable to store the successfully logged in user
+			var loggedInUser = false;
+
+			//callback called after the token is generated
+			var successGeneratingToken = function(token){
+				return done(null, loggedInUser);
+			}
+
+			//callback called after trying to generate the token
+			var errorGeneratingToken = function(error){
+				logger.error("LocalStrategy - database error generating token");
+				return done(error);
+			}
+
+			//called after searching by username for the user in db
 			var success = function(user){
 				
 				if(!user){
@@ -23,15 +37,23 @@ module.exports = function (passport, config, app) {
 
 				var encryptedPassword = user.encryptPassword(password);
 
-				if(encryptedPassword == user.password){
-					logger.info("LocalStrategy - successful login");
-					return done(null, user);
-				}else{
-					logger.error("LocalStrategy - password does not match");
-					return done(null, false, { message: 'Invalid password' });
+				if(encryptedPassword === user.password){
+
+					logger.info("LocalStrategy - successful login. Generating token ....");
+
+					loggedInUser = user;
+
+					//create token
+					userTokenRepository.createTokenForUser(loggedInUser.id, successGeneratingToken, errorGeneratingToken);
+
+					return;
 				}
+					
+				logger.error("LocalStrategy - password does not match");
+				return done(null, false, { message: 'Invalid password' });
 			}
 
+			//database error verifying user in login
 			var error = function(error){
 				logger.error("LocalStrategy - database error when logging in");
 				return done(error);

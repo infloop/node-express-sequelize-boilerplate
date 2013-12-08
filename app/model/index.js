@@ -36,7 +36,10 @@ var sequelize = new Sequelize(config.db.name, config.db.user, config.db.password
 
 // load models
 var models = [
-	"User"
+	"User",
+	"UserToken",
+	"Role",
+	"Permission"
 ];
 
 models.forEach(function(model) {
@@ -46,12 +49,20 @@ models.forEach(function(model) {
 // describe relationships
 (function(m) {
 
-  //m.DocumentType.hasOne(m.DocumentType, {as: "parent", foreignKey: "parent_id"});
+  m.User.belongsTo(m.Role);
+  m.Role.hasMany(m.Permission);
+  m.UserToken.belongsTo(m.User);
 
 })(module.exports);
 
 
-//sequelize.sync({force: true});
+sequelize.sync(
+	//{force: true}
+	)
+	.error(function(error){
+		logger.error(error);
+		throw error;
+	});
 
 // export connection
 module.exports.sequelize = sequelize;

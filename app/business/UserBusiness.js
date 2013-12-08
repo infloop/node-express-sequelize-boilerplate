@@ -1,6 +1,9 @@
 var logger = require("../../config/logger");
 var constants = require("../../config/constants");
 var repositoryFactory = require("../repository/RepositoryFactory");
+// Load configurations according to the selected environment
+var env = process.env.NODE_ENV || 'development';
+var config = require('../../config/config')[env];
 
 /**
  * This method returns (in the response) all users
@@ -34,14 +37,42 @@ module.exports.all = function(req, res){
  * If no previous page exists, then redirect to index page
  */
 module.exports.doLogin = function(req, res){
-	logger.debug("Inicio - doLogin");
-	if (req.session.returnTo) {
-	    res.redirect(req.session.returnTo)
-	    delete req.session.returnTo
-	    return
+	logger.debug("Inicio - doLogin "+req.user.username);
+	
+	var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
+
+	var success = function(token){
+		if(token){
+			var cookieName = config.app.cookieName;
+			//set cookie
+			res.cookie(cookieName, token.token, { signed: true });
+			return res.json("OK");	
+		}
+
+		return res.status(401).json("Token not found");
+		
 	}
-	res.redirect('/')
+
+	var error = function(error){
+		res.status(500).json(error);
+	}
+
+
+	userTokenRepository.findLastValidTokenByUser(req.user.id, success, error);
+
+
 	logger.debug("Fin - doLogin");
+}
+
+/**
+ * Logs out the user from app
+ */
+module.exports.doLogout = function(req, res){
+	var cookieName = config.app.cookieName;
+	//set cookie
+	res.clearCookie(cookieName);
+	//redirect to login page
+	res.redirect("/login");
 }
 
 /*
@@ -58,17 +89,14 @@ module.exports.create = function(req, res){
 
 	var error = function(error){
 		logger.error(error);
-		res.status(500).json(err);
+		res.status(500).json(error);
 	}
 
 	//encrypt password
 	var userEntry = userRepository.build(req.body);
-	 logger.debug("userEntry:"+userEntry.password);
 
 	var encryptedPassword = userEntry.encryptPassword(userEntry.password);
 	userEntry.setDataValue('password', encryptedPassword);
-
-	logger.debug("userEntry2:"+userEntry.password);
 
 	userEntry.save().success(success).error(error);
 

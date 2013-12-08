@@ -83,7 +83,7 @@ describe('UserRepository', function () {
 				userRepository.all(options, success, error);
 			};
 
-			//first crear some example users
+			//first create some example users
 			createUsers(totalRegisters, find);
 			
 		});
@@ -136,7 +136,7 @@ describe('UserRepository', function () {
 				userRepository.findByUsername(username, success, error);
 			};
 
-			//first crear some example users
+			//first create some example users
 			createUsers(totalRegisters, findByUsername);
 			
 		});

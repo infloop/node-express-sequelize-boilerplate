@@ -50,18 +50,13 @@ module.exports = function(sequelize, DataTypes) {
     },
 
     decryptPassword: function(){
-      var decipher = crypto.createDecipher('aes-256-cbc', this,salt);
+      var decipher = crypto.createDecipher('aes-256-cbc', this.salt);
       decipher.update(this.password, 'base64', 'utf8');
       var decryptedPassword = decipher.final('utf8');
       return decryptedPassword;
     }
   }
 
-  });
-
-  User.sync({}).error(function(error){
-      logger.error(error);
-      throw error;
   });
 
   return User;

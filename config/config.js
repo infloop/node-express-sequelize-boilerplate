@@ -16,7 +16,10 @@ module.exports = {
     },
     app: {
       name: 'Nodejs Express Sequelize Boilerplate',
-      port: 3001
+      port: 3001,
+      cookieName: "myCookie",
+      cookieSecret: "boom",
+      tokenExpiration: 3600000*2
     }
   },
   test: {
@@ -27,10 +30,21 @@ module.exports = {
     },
     app: {
       name: 'Nodejs Express Sequelize Boilerplate TEST',
-      port: 3001
+      port: 3001,
+      cookieName: "myCookie",
+      cookieSecret: "boom",
+      tokenExpiration: 3600000*2
     },
   },
   production: {
-
+    loggerLevel: "info",
+    cookieName: "myCookie",
+    app: {
+      name: 'Nodejs Express Sequelize Boilerplate PROD',
+      port: 3001,
+      cookieName: "myCookie",
+      cookieSecret: "boom",
+      tokenExpiration: 3600000*2
+    }
   }
 };
