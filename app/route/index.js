@@ -14,7 +14,7 @@ module.exports = function (app, passport) {
 	//index page - requires authorization
 	app.get("/", 
 			
-			authorization.requiresLogin ,
+			authorization.requiresLoginAndRedirect ,
 			
 			function(req, res){
 

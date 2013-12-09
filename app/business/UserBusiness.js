@@ -5,6 +5,8 @@ var repositoryFactory = require("../repository/RepositoryFactory");
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
+var userResource = require("../resource/UserResource");
+
 /**
  * This method returns (in the response) all users
  */
@@ -13,7 +15,7 @@ module.exports.all = function(req, res){
 	var userRepository = repositoryFactory.getUserRepository(req.app);
 
 	var success = function(result){
-		res.json(result);
+		res.json(userResource.buildList(result));
 	}
 
 	var error = function(err){
