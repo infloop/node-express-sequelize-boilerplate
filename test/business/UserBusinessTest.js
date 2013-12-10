@@ -1,5 +1,6 @@
 var should = require('should');
 var rewire = require("rewire");
+var logger = require("../../config/logger");
 
 var constants = require("../../config/constants");
 
@@ -12,7 +13,7 @@ describe('UserBusiness', function () {
 			//attention: it's rewire not require :)
 			var userBusiness = rewire("../../app/business/UserBusiness");
 
-			var expectedResult= {
+			var expectedResult = {
 				foo: 1
 			}
 
@@ -29,19 +30,21 @@ describe('UserBusiness', function () {
 			    render: function(view, viewData) {
 			        view.should.equal(constants.routes.users);
 			    },
-			    json: function(result){
-			    	result.should.equal(expectedResult);
-			    },
-			    status: function(status){
+                status: function(status) {
 			    	status.should.equal(expectedStatus);
 			    	return this;
+			    },
+			    json: function(result) {
+
+			    	result.should.equal(expectedResult);
+                    done();
 			    }
 			};
 
 			/**
 			 * Mock all needed methods and properties to the element we try to test
 			 */
-			var mocks = function(){
+			var mocks = function() {
 
 				//mock getRepository function (i.e. the repository). This way, we do not need the database connection
 				userBusiness.__set__("repositoryFactory", {
@@ -53,14 +56,23 @@ describe('UserBusiness', function () {
 							}
 						}
 				});
+
+                userBusiness.__set__("userResource", {
+
+                    buildList: function(result) {
+
+                        var array = [];
+                        array.push(expectedResult);
+                        return expectedResult;
+                    }
+                })
+
 			}
 
 			//set up mocks
 			mocks();
 
 			userBusiness.all(request, response);
-
-			done();
 		});
 		
 		it('should return 500 error if something wrong happens at persistence layer', function(done){
@@ -75,7 +87,7 @@ describe('UserBusiness', function () {
 			var expectedStatus = 500;
 
 			var request = {
-				param: function(name){
+				param: function(name) {
 					//mocks offset and limit
 					return 10;
 				}
@@ -85,11 +97,11 @@ describe('UserBusiness', function () {
 			    render: function(view, viewData) {
 			        view.should.equal(constants.routes.documentType);
 			    },
-			    status: function(status){
+			    status: function(status) {
 			    	status.should.equal(expectedStatus);
 			    	return this;
 			    },
-			    json: function(result){
+			    json: function(result) {
 			    	result.should.equal(expectedResult);
 			    	done();
 			    }
