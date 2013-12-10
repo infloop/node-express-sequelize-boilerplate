@@ -11,6 +11,5 @@ module.exports = function(roleModel){
 		roleModel.findAll({offset: options.offset, limit: options.limit}).success(success).error(error);
 	}
 
-
 	return roleModel;
 };

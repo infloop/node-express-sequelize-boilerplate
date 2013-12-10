@@ -38,13 +38,14 @@ module.exports.all = function(req, res){
  * This method return to the previous page, before login.
  * If no previous page exists, then redirect to index page
  */
-module.exports.doLogin = function(req, res){
-	logger.debug("Inicio - doLogin "+req.user.username);
+module.exports.doLogin = function(req, res) {
+    
+	logger.debug("Inicio - doLogin " + req.user.username);
 	
 	var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
 
-	var success = function(token){
-		if(token){
+	var success = function(token) {
+		if(token) {
 			var cookieName = config.app.cookieName;
 			//set cookie
 			res.cookie(cookieName, token.token, { signed: true });
@@ -59,9 +60,7 @@ module.exports.doLogin = function(req, res){
 		res.status(500).json(error);
 	}
 
-
 	userTokenRepository.findLastValidTokenByUser(req.user.id, success, error);
-
 
 	logger.debug("Fin - doLogin");
 }
