@@ -10,7 +10,6 @@ var authorization = require("../auth/Authorization");
  */
 module.exports = function (app, passport) {
 
-
 	//index page - requires authorization
 	app.get("/", 
 			
@@ -31,7 +30,6 @@ module.exports = function (app, passport) {
 				res.render('login');
 			}
 	);
-
 
 	//user specific routes
 	userRoutes(app, passport);

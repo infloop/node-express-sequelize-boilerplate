@@ -7,7 +7,7 @@ module.exports = function(roleModel){
 	/**
 	 * finds all results of the roles table according to the params offset and limit
 	 */
-	roleModel.all = function(options, success, error){
+	roleModel.all = function(options, success, error) {
 		roleModel.findAll({offset: options.offset, limit: options.limit}).success(success).error(error);
 	}
 

@@ -5,7 +5,7 @@ var repositoryFactory = require("../repository/RepositoryFactory");
 /**
  * This method returns (in the response) all roles
  */
-module.exports.all = function(req, res){
+module.exports.all = function(req, res) {
 	
 	var roleRepository = repositoryFactory.getRoleRepository(req.app);
 
@@ -21,12 +21,12 @@ module.exports.all = function(req, res){
 	var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
 
 	var options = {
+
 		offset: offset,
 		limit: limit
 	}
 
 	roleRepository.all(options, success, error);
-
 }
 
 /*
@@ -49,5 +49,4 @@ module.exports.create = function(req, res){
 	var roleEntry = roleRepository.build(req.body);
 	
 	roleEntry.save().success(success).error(error);
-
 }

@@ -2,7 +2,7 @@
  * This module represents a repository for the table user
  * @param {Sequelize} userModel the model created by sequelize
  */
-module.exports = function(userModel){
+module.exports = function(userModel) {
 
 	/**
 	 * finds all results of the user table according to the params offset and limit
@@ -14,7 +14,6 @@ module.exports = function(userModel){
 	userModel.findByUsername = function(username, success, error){
 		userModel.find({where: {username: username}}).success(success).error(error);
 	}
-
 
 	return userModel;
 };

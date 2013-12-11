@@ -62,5 +62,4 @@ module.exports = function (passport, config, app) {
 			userRepository.findByUsername(username, success, error);
 		}
 	));
-
 };
