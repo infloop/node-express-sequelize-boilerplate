@@ -5,37 +5,47 @@ var repositoryFactory = require("../repository/RepositoryFactory");
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
+var error401 = function(res, error) {
+
+    var response = {
+        error: error,
+        loginUrl: "/login"
+    }
+
+    return res.status(401).json(response);
+}
+
 /*
  *  Generic require login routing middleware. Redirects to
  * /login if no cookie found
  */
 exports.requiresLoginAndRedirect = function (req, res, next) {
 
-	var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
-  	
-  	//get the cookie
-	var cookie = req.signedCookies[config.app.cookieName];
+    var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
 
-	var error = function(error){
-		req.session.returnTo = req.originalUrl
-    	return res.redirect('/login');
-	}
+    //get the cookie
+    var cookie = req.signedCookies[config.app.cookieName];
 
-	if(!cookie){		
-		return error("No autorizado.");	
-	}
+    var error = function(error){
+        req.session.returnTo = req.originalUrl
+        return res.redirect('/login');
+    }
 
-	var success = function(token){
-		req.loggedInUser = token.userId;
+    if(!cookie){		
+        return error("No autorizado.");	
+    }
 
-		//update token
-  		userTokenRepository.updateTokenExpiration(cookie);
+    var success = function(token){
+        req.loggedInUser = token.userId;
 
-		next();
-	}
+        //update token
+        userTokenRepository.updateTokenExpiration(cookie);
 
-	//find token
-  	userTokenRepository.findByToken(cookie, success, error);
+        next();
+    }
+
+    //find token
+    userTokenRepository.findByToken(cookie, success, error);
 }
 
 /*
@@ -44,37 +54,50 @@ exports.requiresLoginAndRedirect = function (req, res, next) {
  */
 exports.requiresLogin = function (req, res, next) {
 
-	var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
-  	
-  	//get the cookie
-	var cookie = req.signedCookies[config.app.cookieName];
+    var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
 
-	var error = function(error){
-		req.session.returnTo = req.originalUrl
-		var response = {
-			error: error,
-			loginUrl: "/login"
-		}
-    	return res.status(401).json(response);
-	}
+    //get the cookie
+    var cookie = req.signedCookies[config.app.cookieName];
 
-	if(!cookie){		
-		return error("No autorizado");	
-	}
+    if(!cookie){		
+        return error401(res, "No autorizado");	
+    }
 
-	var success = function(token){
-		if(token){
-			req.loggedInUser = token.userId;
+    var success = function(token){
+        if(token){
+            req.loggedInUser = token.userId;
 
-			//update token
-	  		userTokenRepository.updateTokenExpiration(cookie);
+            //update token
+            userTokenRepository.updateTokenExpiration(cookie);
 
-			return next();
-		}
+            return next();
+        }
 
-		return error("No autorizado");
-	}
+        return error401(res, "No autorizado");
+    }
 
-	//find token
-  	userTokenRepository.findByToken(cookie, success, error);
+    //find token
+    userTokenRepository.findByToken(cookie, success, error401);
+}
+
+exports.checkIsAuthorizedToAccess = function(req, res, next) {
+
+    var token = req.signedCookies[config.app.cookieName];
+    logger.debug("TOKEN: " + token);
+
+    var route = req.route;
+    var method = route.method;
+    var uri = req.path;
+
+    if (method === 'get') {
+
+        logger.debug("uri: " + uri);
+
+        if (uri == '/api/roles') {
+
+            error401(res, "No autorizado");
+        }
+    }
+
+    next();
 }

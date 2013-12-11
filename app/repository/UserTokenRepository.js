@@ -62,7 +62,7 @@ module.exports = function(userTokenModel) {
     /**
      * Updates the expiration date of the token
      */
-    userTokenModel.updateTokenExpiration = function(token, success, error){
+    userTokenModel.updateTokenExpiration = function(token, success, error) {
         var timestamp = new Date().getTime();
         var timeout = config.app.tokenExpiration;
         var expiration = (timestamp-0)+(timeout-0);

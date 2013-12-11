@@ -11,8 +11,11 @@ var authorization = require("../auth/Authorization");
  */
 module.exports = function (app, passport) {
 
+    var callbackArray = [authorization.requiresLogin, authorization.checkIsAuthorizedToAccess];
+
 	//all roles
 	app.get("/"+constants.routes.roles, 
+            callbackArray,
 			roleBusiness.all);
 
 	app.put("/"+constants.routes.roles,

@@ -48,19 +48,6 @@ module.exports = function(sequelize, DataTypes) {
                 decipher.update(this.token, 'base64', 'utf8');
                 var decryptedToken = decipher.final('utf8');
                 return decryptedToken;
-            },
-
-            getRoleByToken: function(success, error) {
-
-                sequelize.query("select * from roles").success(success).error(error);
-
-                /*
-                sequelize.query("SELECT r.id, r.name FROM userToken ut LEFT JOIN users AS u 
-                ON u.id = ut.userId LEFT JOIN roles AS r ON u.roleId = r.id").success(function(result) {
-
-                logger.debug("QQQQQQQQQQQQQQQQQQQQQQQ: " + result);
-                });
-                */
             }
         }
 

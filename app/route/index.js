@@ -13,12 +13,12 @@ module.exports = function (app, passport) {
 	//index page - requires authorization
 	app.get("/", 
 			
-			authorization.requiresLoginAndRedirect ,
+			authorization.requiresLoginAndRedirect,
+            //authorization.checkIsAuthorizedToAccess,
 			
 			function(req, res){
 
 				logger.debug("Auth user is: "+req.loggedInUser+" !!!!!");
-
 				res.render('index');
 			}
 	);
