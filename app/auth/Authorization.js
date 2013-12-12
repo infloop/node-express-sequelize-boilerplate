@@ -1,4 +1,3 @@
-
 var logger = require("../../config/logger");
 var repositoryFactory = require("../repository/RepositoryFactory");
 // Load configurations according to the selected environment
@@ -84,6 +83,19 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
     var token = req.signedCookies[config.app.cookieName];
     logger.debug("TOKEN: " + token);
+
+    var roleSuccess = function(roleResult) {
+
+        logger.debug("roleSuccess: " + roleResult);
+    };
+
+    var roleError = function(roleErrorMessage) {
+
+        logger.debug("roleError: " + roleErrorMessage);
+    };
+
+    var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
+    sequelizeRepository.findRoleByToken(token, roleSuccess, roleError);
 
     var route = req.route;
     var method = route.method;
