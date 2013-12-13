@@ -114,11 +114,11 @@ module.exports.getUserRoleByToken = function(req, res) {
 
             tokenError("No se encontró el token");
         }
-    }
+    };
 
     var tokenError = function(error) {
         logger.debug("*************** error: " + error);
-    }
+    };
 
     var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
     sequelizeRepository.findRoleByToken(tokenSuccess, tokenError);

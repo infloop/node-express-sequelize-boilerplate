@@ -1,8 +1,8 @@
-var userRoutes = require("./UserRoutes");
-var roleRoutes = require("./RoleRoutes");
 var logger = require("../../config/logger");
 
-
+var publicRoutes = require("./PublicRoutes");
+var userRoutes = require("./UserRoutes");
+var roleRoutes = require("./RoleRoutes");
 var authorization = require("../auth/Authorization");
 
 /**
@@ -10,31 +10,17 @@ var authorization = require("../auth/Authorization");
  */
 module.exports = function (app, passport) {
 
-	//index page - requires authorization
-	app.get("/", 
-			
-			authorization.requiresLoginAndRedirect,
-            //authorization.checkIsAuthorizedToAccess,
-			
-			function(req, res){
+	publicRoutes(app, passport);
 
-				logger.debug("Auth user is: "+req.loggedInUser+" !!!!!");
-				res.render('index');
-			}
-	);
-
-	//login page => public
-	app.get("/login", 
-
-			function(req, res){
-				res.render('login');
-			}
-	);
+    /*
+     *  Check the user is logged in and has the required permissions for every request
+     *  except for the public routes above.
+     */
+    app.all('*', [authorization.requiresLogin, authorization.checkIsAuthorizedToAccess]);
 
 	//user specific routes
 	userRoutes(app, passport);
 
 	//role specific routes
 	roleRoutes(app, passport);
-
 }

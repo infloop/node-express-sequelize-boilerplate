@@ -54,8 +54,6 @@ module.exports.getRolePermissions = function(req, res) {
 
     var roleSuccess = function(role) {
 
-        logger.debug(role);
-
         var success = function(permissionList) {
 
             if (permissionList) {
@@ -94,36 +92,37 @@ module.exports.addPermissionToRole = function(req, res) {
 
         if (role) {
 
+            var saveSuccess = function(permission) {
+
+                logger.debug("from saveSuccess");
+
+                role.addPermission(permission).success(function() {
+
+                    logger.debug("*************** HERE 123");
+                    res.status(200).json("");
+                });
+            };
+
+            var saveError = function(error) {
+
+                res.status(500).json(error);
+            };
+
+            // Saves the permission to the role.
+            var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
+            var permissionEntry =  permissionRepository.build(req.body);
+            permissionEntry.save().success(saveSuccess).error(saveError);
+
         } else {
 
+            roleError(error);
         }
-
-        var saveSuccess = function(permission) {
-
-            logger.debug("from saveSuccess");
-
-            role.addPermission(permission).success(function() {
-
-                logger.debug("*************** HERE 123");
-                res.status(200).json("");
-            });
-        };
-
-        var saveError = function(error) {
-
-            res.status(500).json(error);
-        };
-
-        // Saves the permission to the role.
-        var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
-        var permissionEntry =  permissionRepository.build(req.body);
-        permissionEntry.save().success(saveSuccess).error(saveError);        
-    }
+    };
 
     var roleError = function(error) {
 
         res.status(500).json(error);
-    }
+    };
 
     var roleRepository = repositoryFactory.getRoleRepository(req.app);
     roleRepository.getRoleByName(req.params.role, roleSuccess, roleError);

@@ -1,5 +1,6 @@
 var logger = require("../../config/logger");
 var repositoryFactory = require("../repository/RepositoryFactory");
+var constants = require("../../config/constants");
 // Load configurations according to the selected environment
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
@@ -18,7 +19,7 @@ var error401 = function(res, error) {
  *  Generic require login routing middleware. Redirects to
  * /login if no cookie found
  */
-exports.requiresLoginAndRedirect = function (req, res, next) {
+exports.requiresLoginAndRedirect = function(req, res, next) {
 
     var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
 
@@ -30,7 +31,7 @@ exports.requiresLoginAndRedirect = function (req, res, next) {
         return res.redirect('/login');
     }
 
-    if(!cookie){		
+    if (!cookie) {
         return error("No autorizado.");	
     }
 
@@ -51,18 +52,18 @@ exports.requiresLoginAndRedirect = function (req, res, next) {
  *  Generic require login routing middleware. Redirects to
  * /login if no cookie found
  */
-exports.requiresLogin = function (req, res, next) {
+exports.requiresLogin = function(req, res, next) {
 
     var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
 
     //get the cookie
     var cookie = req.signedCookies[config.app.cookieName];
 
-    if(!cookie){		
+    if(!cookie) {		
         return error401(res, "No autorizado");	
     }
 
-    var success = function(token){
+    var success = function(token) {
         if(token){
             req.loggedInUser = token.userId;
 
@@ -90,6 +91,25 @@ function isAuthorized(permissionList, httpVerb, uri) {
             found = true;
         }
     }
+
+    logger.debug("isAuthorized: " + found);
+
+    return found;
+}
+
+function isRequestingAPublicResource(publicResourceList, httpVerb, uri) {
+
+    var found = false;
+
+    for (var i = 0; (i < publicResourceList.length) && (!found); i++) {
+
+        var publicResource = publicResourceList[i];
+        if ((publicResource.httpVerb == httpVerb) && (publicResource.uri == uri)) {
+            found = true;
+        }
+    }
+
+    logger.debug("isRequestingAPublicResource: " + found);
 
     return found;
 }
@@ -154,6 +174,18 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
         logger.debug("roleError: " + roleErrorMessage);
     };
 
-    var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
-    sequelizeRepository.findRoleByToken(token, roleSuccess, roleError);
+    
+    var publicResourceList = constants.getPublicRoutes();
+
+    if (isRequestingAPublicResource(publicResourceList, httpVerb, uri)) {
+
+        // If the requested resource is public then it allows the user to access it.
+        return next();
+
+    } else {
+        
+        // If the requested resource is not public the it check if the user is authorized to access it.
+        var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
+        sequelizeRepository.findRoleByToken(token, roleSuccess, roleError);
+    }
 }

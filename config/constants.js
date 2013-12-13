@@ -1,11 +1,36 @@
-module.exports = {
+module.exports.getRoutes = function() {
 
-	routes : {
+    var routes = {
 
-		users: "api/users",
-		login: "api/users/login",
-		logout: "api/users/logout",
-		roles: "api/roles",
-        permissions: "api/roles/:role/permissions"
-	}
-}
+        // Public resources
+        index: "/",
+        login: "/login",
+        userLogin: "/api/users/login",
+        userLogout: "/api/users/logout",
+
+        // Users
+        users: "/api/users",
+
+        // Roles
+        roles: "/api/roles",
+
+        // Permissions
+        permissions: "/api/roles/:role/permissions"
+    }
+
+    return routes;
+};
+
+module.exports.getPublicRoutes = function() {
+
+    var routes = this.getRoutes();
+
+    var publicResources = [
+        { httpVerb: 'get', uri: routes.index },
+        { httpVerb: 'get', uri: routes.login },
+        { httpVerb: 'post', uri: routes.userLogin },
+        { httpVerb: 'get', uri: routes.userLogout }
+    ];
+
+    return publicResources;
+};

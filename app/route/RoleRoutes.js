@@ -1,9 +1,9 @@
 /**
  * This module represents all routes related to roles
  */
+var logger = require("../../config/logger");
 var constants = require("../../config/constants");
 var roleBusiness = require("../business/RoleBusiness");
-var authorization = require("../auth/Authorization");
 
 /**
  * Following are the routes for roles
@@ -11,17 +11,17 @@ var authorization = require("../auth/Authorization");
  */
 module.exports = function (app, passport) {
 
-    var callbackArray = [authorization.requiresLogin, authorization.checkIsAuthorizedToAccess];
+    var routes = constants.getRoutes();
 
     // Get all roles.
-    app.get("/" + constants.routes.roles, callbackArray, roleBusiness.all);
+    app.get(routes.roles, roleBusiness.all);
     
     // Create a new role.
-    app.put("/" + constants.routes.roles, roleBusiness.create);
+    app.put(routes.roles, roleBusiness.create);
 
     // Get all role permissions
-    app.get("/" + constants.routes.permissions, roleBusiness.getRolePermissions);
+    app.get(routes.permissions, roleBusiness.getRolePermissions);
 
     // add a new permission to a role.
-    app.post("/" + constants.routes.permissions, roleBusiness.addPermissionToRole);
+    app.post(routes.permissions, roleBusiness.addPermissionToRole);
 };

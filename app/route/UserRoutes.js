@@ -11,22 +11,18 @@ var authorization = require("../auth/Authorization");
  */
 module.exports = function (app, passport) {
 
+    var routes = constants.getRoutes();
+
 	//all users
-	app.get("/"+constants.routes.users, 
-			authorization.requiresLogin,
-			userBusiness.all);
+	app.get(routes.users, userBusiness.all);
 
 	//new user
-	app.put("/"+constants.routes.users,
-			userBusiness.create);
+	app.put(routes.users, userBusiness.create);
 
 	//login
-	app.post("/"+constants.routes.login, 
-			passport.authenticate('local', { session: false }),
+	app.post(routes.userLogin, passport.authenticate('local', { session: false }),
 			userBusiness.doLogin);
 
 	//logout
-	app.get("/"+constants.routes.logout,
-			userBusiness.doLogout);
-
+	app.get(routes.userLogout, userBusiness.doLogout);
 };
