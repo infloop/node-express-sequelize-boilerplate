@@ -8,17 +8,22 @@ var randomString = require('randomstring');
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
+// var Role = 
+
 module.exports = function(sequelizeModel) {
 
     /*
      * Finds a role row by token
      */
     sequelizeModel.findRoleByToken = function(token, success, error) {
+
+        var Role = require("../model/Role");
         
         // Raw query, see: http://sequelizejs.com/docs/latest/usage#raw-queries
         var rawQuery = 'SELECT r.id, r.name FROM userTokens ut, users u, roles r ' + 
             'WHERE ut.token = :queryToken AND ut.userId = u.id AND u.roleId = r.id GROUP BY r.id';
-        sequelizeModel.query(rawQuery, null, { raw: true }, { queryToken: token }).success(success).error(error);
+        sequelizeModel.query(rawQuery, null, { plain: true, raw: true }, { queryToken: token })
+        .success(success).error(error);
     }
 
     return sequelizeModel;

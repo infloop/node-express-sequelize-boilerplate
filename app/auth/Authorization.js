@@ -79,14 +79,63 @@ exports.requiresLogin = function (req, res, next) {
     userTokenRepository.findByToken(cookie, success, error401);
 }
 
+function isAuthorized(permissionList, httpVerb, uri) {
+
+    permissionList.forEach(function (permission) {
+
+        logger.debug(permission);
+    });
+}
+
 exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
     var token = req.signedCookies[config.app.cookieName];
-    logger.debug("TOKEN: " + token);
+    var route = req.route;
+    var httpVerb = route.method;
+    var uri = req.path;
 
     var roleSuccess = function(roleResult) {
 
-        logger.debug("roleSuccess: " + roleResult);
+        var permissionSuccess = function(permissionList, httpVerb, uri) {
+
+            if (permissionList) {
+
+                if (isAuthorized(permissionList, httpVerb, uri)) {
+
+                    // enviar la respuesta
+                    // Cual es la respuesta que se debe enviar? 
+                    // Un redirect, dejandolo pasar a donde hace el request.
+                    // O mejor el resultado del request? (voto por esta).
+                    req.status(200); // Cambiar.
+
+                } else {
+
+                    error401(res, "No autorizado");
+                }
+
+            } else {
+
+                // The given role does not conatin permissions.
+                error401(res, "No autorizado");
+            }
+        };
+
+        var permissionError = function(error) {
+
+            error401(res, "No autorizado");
+        };
+
+        if (roleResult) {
+
+            var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
+            permissionRepository.findPermissionsByRole(roleResult, permissionSuccess, permissionError);
+
+        } else {
+
+            // No debería entrar aqui.
+            var message = 'No hay existe un rol correspondiente al token:';
+            res.status(500).json(message);
+        }
     };
 
     var roleError = function(roleErrorMessage) {
@@ -97,19 +146,7 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
     var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
     sequelizeRepository.findRoleByToken(token, roleSuccess, roleError);
 
-    var route = req.route;
-    var method = route.method;
-    var uri = req.path;
-
-    if (method === 'get') {
-
-        logger.debug("uri: " + uri);
-
-        if (uri == '/api/roles') {
-
-            error401(res, "No autorizado");
-        }
-    }
-
-    next();
+    // Donde pongo el next? si lo pongo aqui me sale el error: 
+    // "No se pueden agregar headers una vez se ha enviado la respuesta."
+    // next(); 
 }
