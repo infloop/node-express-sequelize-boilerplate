@@ -50,7 +50,7 @@ describe('UserBusiness', function () {
 				userBusiness.__set__("repositoryFactory", {
 						getUserRepository: function(req){
 							return {
-								all: function(options, success, error){
+								getAllUsers: function(options, success, error){
 									success(expectedResult);
 								}
 							}
@@ -116,7 +116,7 @@ describe('UserBusiness', function () {
 				userBusiness.__set__("repositoryFactory", {
 						getUserRepository: function(req){
 							return {
-								all: function(options, success, error){
+								getAllUsers: function(options, success, error){
 									error(expectedResult);
 								}
 							}

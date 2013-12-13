@@ -81,32 +81,43 @@ exports.requiresLogin = function (req, res, next) {
 
 function isAuthorized(permissionList, httpVerb, uri) {
 
-    permissionList.forEach(function (permission) {
+    var found = false;
 
-        logger.debug(permission);
-    });
+    for (var i = 0; (i < permissionList.length) && (!found); i++) {
+
+        var permission = permissionList[i];
+        if ((permission.httpVerb == httpVerb) && (permission.uri == uri)) {
+            found = true;
+        }
+    }
+
+    return found;
 }
 
 exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
     var token = req.signedCookies[config.app.cookieName];
+
     var route = req.route;
     var httpVerb = route.method;
     var uri = req.path;
 
     var roleSuccess = function(roleResult) {
 
-        var permissionSuccess = function(permissionList, httpVerb, uri) {
+        var permissionSuccess = function(permissionList) {
 
             if (permissionList) {
 
                 if (isAuthorized(permissionList, httpVerb, uri)) {
 
-                    // enviar la respuesta
-                    // Cual es la respuesta que se debe enviar? 
-                    // Un redirect, dejandolo pasar a donde hace el request.
-                    // O mejor el resultado del request? (voto por esta).
-                    req.status(200); // Cambiar.
+                    var message = "El usuario: " + token + 
+                                  " está autorizado para ejecutar la operacion: "
+                                  + httpVerb + " sobre la uri: " + uri;
+
+                    logger.info(message);
+
+                    // If the user is authorized the we allow he/she access the requested operation.
+                    return next();
 
                 } else {
 
@@ -133,7 +144,7 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
         } else {
 
             // No debería entrar aqui.
-            var message = 'No hay existe un rol correspondiente al token:';
+            var message = 'No hay existe un rol correspondiente al token enviado.';
             res.status(500).json(message);
         }
     };
@@ -145,8 +156,4 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
     var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
     sequelizeRepository.findRoleByToken(token, roleSuccess, roleError);
-
-    // Donde pongo el next? si lo pongo aqui me sale el error: 
-    // "No se pueden agregar headers una vez se ha enviado la respuesta."
-    // next(); 
 }

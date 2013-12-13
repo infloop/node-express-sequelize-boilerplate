@@ -30,7 +30,7 @@ module.exports.all = function(req, res){
         limit: limit
     }
 
-    userRepository.all(options, success, error);
+    userRepository.getAllUsers(options, success, error);
 }
 
 /**

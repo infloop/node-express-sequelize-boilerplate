@@ -7,7 +7,7 @@ module.exports = function(permissionModel){
 	/**
 	 * finds all results of the permissions table according to the params offset and limit
 	 */
-	permissionModel.all = function(options, success, error){
+	permissionModel.getAllPermissions = function(options, success, error){
 		permissionModel.findAll({offset: options.offset, limit: options.limit}).success(success).error(error);
 	}
 
@@ -15,7 +15,8 @@ module.exports = function(permissionModel){
      * Gets the permissions of the given role.
      */
     permissionModel.findPermissionsByRole = function(role, success, error) {
-        permissionModel.find({ where: { roleId: role.id } }).success(success).error(error);
+
+        permissionModel.findAll({ where: { roleId: role.id } }).success(success).error(error);
     }
 
 	return permissionModel;

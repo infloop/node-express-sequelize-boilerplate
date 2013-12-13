@@ -13,12 +13,15 @@ module.exports = function (app, passport) {
 
     var callbackArray = [authorization.requiresLogin, authorization.checkIsAuthorizedToAccess];
 
-	//all roles
-	app.get("/"+constants.routes.roles, 
-            callbackArray,
-			roleBusiness.all);
+    // Get all roles.
+    app.get("/" + constants.routes.roles, callbackArray, roleBusiness.all);
+    
+    // Create a new role.
+    app.put("/" + constants.routes.roles, roleBusiness.create);
 
-	app.put("/"+constants.routes.roles,
-			roleBusiness.create);
+    // Get all role permissions
+    app.get("/" + constants.routes.permissions, roleBusiness.getRolePermissions);
 
+    // add a new permission to a role.
+    app.post("/" + constants.routes.permissions, roleBusiness.addPermissionToRole);
 };
