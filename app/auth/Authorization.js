@@ -5,6 +5,10 @@ var constants = require("../../config/constants");
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
+/**
+ * Similar to 403 Forbidden, but specifically for use when 
+ * authentication is required and has failed or has not yet been provided
+ */
 var error401 = function(res, error) {
 
     var response = {
@@ -13,6 +17,23 @@ var error401 = function(res, error) {
     }
 
     return res.status(401).json(response);
+}
+
+/**
+ * On servers where authentication is required, 
+ * this commonly means that the provided credentials were 
+ * successfully authenticated but that the credentials still 
+ * do not grant the client permission to access the resource 
+ * (e.g., a recognized user attempting to access restricted content).
+ */
+var error403 = function(res, error) {
+
+    var response = {
+        error: error,
+        loginUrl: "/login"
+    }
+
+    return res.status(403).json(response);
 }
 
 /*
@@ -141,19 +162,18 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
                 } else {
 
-                    error401(res, "No autorizado");
+                    error403(res, "No autorizado");
                 }
 
             } else {
 
                 // The given role does not conatin permissions.
-                error401(res, "No autorizado");
+                error403(res, "No autorizado");
             }
         };
 
         var permissionError = function(error) {
-
-            error401(res, "No autorizado");
+            res.status(503).json(error);
         };
 
         if (roleResult) {
@@ -170,8 +190,7 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
     };
 
     var roleError = function(roleErrorMessage) {
-
-        logger.debug("roleError: " + roleErrorMessage);
+        res.status(503).json(error);
     };
 
     
