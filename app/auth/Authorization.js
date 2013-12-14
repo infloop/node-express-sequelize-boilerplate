@@ -1,80 +1,191 @@
-
 var logger = require("../../config/logger");
 var repositoryFactory = require("../repository/RepositoryFactory");
+var constants = require("../../config/constants");
 // Load configurations according to the selected environment
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
-/*
- *  Generic require login routing middleware. Redirects to
- * /login if no cookie found
- */
-exports.requiresLoginAndRedirect = function (req, res, next) {
+var error401 = function(res, error) {
 
-	var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
-  	
-  	//get the cookie
-	var cookie = req.signedCookies[config.app.cookieName];
+    var response = {
+        error: error,
+        loginUrl: "/login"
+    }
 
-	var error = function(error){
-		req.session.returnTo = req.originalUrl
-    	return res.redirect('/login');
-	}
-
-	if(!cookie){		
-		return error("No autorizado.");	
-	}
-
-	var success = function(token){
-		req.loggedInUser = token.userId;
-
-		//update token
-  		userTokenRepository.updateTokenExpiration(cookie);
-
-		next();
-	}
-
-	//find token
-  	userTokenRepository.findByToken(cookie, success, error);
+    return res.status(401).json(response);
 }
 
 /*
  *  Generic require login routing middleware. Redirects to
  * /login if no cookie found
  */
-exports.requiresLogin = function (req, res, next) {
+exports.requiresLoginAndRedirect = function(req, res, next) {
 
-	var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
-  	
-  	//get the cookie
-	var cookie = req.signedCookies[config.app.cookieName];
+    var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
 
-	var error = function(error){
-		req.session.returnTo = req.originalUrl
-		var response = {
-			error: error,
-			loginUrl: "/login"
-		}
-    	return res.status(401).json(response);
-	}
+    //get the cookie
+    var cookie = req.signedCookies[config.app.cookieName];
 
-	if(!cookie){		
-		return error("No autorizado");	
-	}
+    var error = function(error){
+        req.session.returnTo = req.originalUrl
+        return res.redirect('/login');
+    }
 
-	var success = function(token){
-		if(token){
-			req.loggedInUser = token.userId;
+    if (!cookie) {
+        return error("No autorizado.");	
+    }
 
-			//update token
-	  		userTokenRepository.updateTokenExpiration(cookie);
+    var success = function(token){
+        req.loggedInUser = token.userId;
 
-			return next();
-		}
+        //update token
+        userTokenRepository.updateTokenExpiration(cookie);
 
-		return error("No autorizado");
-	}
+        next();
+    }
 
-	//find token
-  	userTokenRepository.findByToken(cookie, success, error);
+    //find token
+    userTokenRepository.findByToken(cookie, success, error);
+}
+
+/*
+ *  Generic require login routing middleware. Redirects to
+ * /login if no cookie found
+ */
+exports.requiresLogin = function(req, res, next) {
+
+    var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
+
+    //get the cookie
+    var cookie = req.signedCookies[config.app.cookieName];
+
+    if(!cookie) {		
+        return error401(res, "No autorizado");	
+    }
+
+    var success = function(token) {
+        if(token){
+            req.loggedInUser = token.userId;
+
+            //update token
+            userTokenRepository.updateTokenExpiration(cookie);
+
+            return next();
+        }
+
+        return error401(res, "No autorizado");
+    }
+
+    //find token
+    userTokenRepository.findByToken(cookie, success, error401);
+}
+
+function isAuthorized(permissionList, httpVerb, uri) {
+
+    var found = false;
+
+    for (var i = 0; (i < permissionList.length) && (!found); i++) {
+
+        var permission = permissionList[i];
+        if ((permission.httpVerb == httpVerb) && (permission.uri == uri)) {
+            found = true;
+        }
+    }
+
+    logger.debug("isAuthorized: " + found);
+
+    return found;
+}
+
+function isRequestingAPublicResource(publicResourceList, httpVerb, uri) {
+
+    var found = false;
+
+    for (var i = 0; (i < publicResourceList.length) && (!found); i++) {
+
+        var publicResource = publicResourceList[i];
+        if ((publicResource.httpVerb == httpVerb) && (publicResource.uri == uri)) {
+            found = true;
+        }
+    }
+
+    logger.debug("isRequestingAPublicResource: " + found);
+
+    return found;
+}
+
+exports.checkIsAuthorizedToAccess = function(req, res, next) {
+
+    var token = req.signedCookies[config.app.cookieName];
+
+    var route = req.route;
+    var httpVerb = route.method;
+    var uri = req.path;
+
+    var roleSuccess = function(roleResult) {
+
+        var permissionSuccess = function(permissionList) {
+
+            if (permissionList) {
+
+                if (isAuthorized(permissionList, httpVerb, uri)) {
+
+                    var message = "El usuario: " + token + 
+                                  " está autorizado para ejecutar la operacion: "
+                                  + httpVerb + " sobre la uri: " + uri;
+
+                    logger.info(message);
+
+                    // If the user is authorized the we allow he/she access the requested operation.
+                    return next();
+
+                } else {
+
+                    error401(res, "No autorizado");
+                }
+
+            } else {
+
+                // The given role does not conatin permissions.
+                error401(res, "No autorizado");
+            }
+        };
+
+        var permissionError = function(error) {
+
+            error401(res, "No autorizado");
+        };
+
+        if (roleResult) {
+
+            var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
+            permissionRepository.findPermissionsByRole(roleResult, permissionSuccess, permissionError);
+
+        } else {
+
+            // No debería entrar aqui.
+            var message = 'No hay existe un rol correspondiente al token enviado.';
+            res.status(500).json(message);
+        }
+    };
+
+    var roleError = function(roleErrorMessage) {
+
+        logger.debug("roleError: " + roleErrorMessage);
+    };
+
+    
+    var publicResourceList = constants.getPublicRoutes();
+
+    if (isRequestingAPublicResource(publicResourceList, httpVerb, uri)) {
+
+        // If the requested resource is public then it allows the user to access it.
+        return next();
+
+    } else {
+        
+        // If the requested resource is not public the it check if the user is authorized to access it.
+        var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
+        sequelizeRepository.findRoleByToken(token, roleSuccess, roleError);
+    }
 }

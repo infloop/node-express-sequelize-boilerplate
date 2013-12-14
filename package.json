@@ -23,7 +23,8 @@
 	    "sequelize": "latest",
 	    "mysql": "latest",
 	    "winston": "latest",
-	    "randomstring": "latest"
+	    "randomstring": "latest",
+        "connect-roles": "latest"
   	},
   	"devDependencies": {
   		"sqlite3": "latest",

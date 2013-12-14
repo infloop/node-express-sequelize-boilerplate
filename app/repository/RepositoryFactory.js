@@ -1,5 +1,10 @@
 var logger = require("../../config/logger");
 
+module.exports.getSequelizeRepository = function(app) {
+
+    return require("../repository/SequelizeRepository")(app.get("models").sequelize);
+}
+
 /**
  * This method returns the user repository
  */

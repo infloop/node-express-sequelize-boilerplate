@@ -80,7 +80,7 @@ describe('UserRepository', function () {
 				}
 
 
-				userRepository.all(options, success, error);
+				userRepository.getAllUsers(options, success, error);
 			};
 
 			//first create some example users
