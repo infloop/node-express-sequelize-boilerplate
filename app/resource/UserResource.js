@@ -29,7 +29,8 @@ module.exports.buildList = function(userModel){
 
 	var array = [];
 
-	for(var i=0;i<userModel.length;i++){
+	for(var i = 0; i < userModel.length; i++) {
+
 		var builtUser = module.exports.build(userModel[i]);
 		array.push(builtUser);
 	}

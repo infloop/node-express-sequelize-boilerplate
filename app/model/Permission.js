@@ -10,13 +10,21 @@ module.exports = function(sequelize, DataTypes) {
       autoIncrement: true
     },
 
-    name: {
+    httpVerb: {
     	type : DataTypes.STRING,
     	validate: {
     		notNull: true,
     		notEmpty: true,
     	}
     },
+
+    uri: {
+        type : DataTypes.STRING,
+    	validate: {
+    		notNull: true,
+    		notEmpty: true,
+    	}
+    }
   
   }, {
 

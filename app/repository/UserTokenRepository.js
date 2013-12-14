@@ -8,79 +8,77 @@ var randomString = require('randomstring');
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
-module.exports = function(userTokenModel){
+module.exports = function(userTokenModel) {
 
-	
-	/**
-	 * Finds a token row by token
-	 */
-	userTokenModel.findByToken = function(token, success, error){
-		userTokenModel.find({where: {token: token}}).success(success).error(error);
-	}
+    /**
+     * Finds a token row by token
+     */
+    userTokenModel.findByToken = function(token, success, error){
+        userTokenModel.find({where: {token: token}}).success(success).error(error);
+    }
 
-	/**
-	 * Finds a token row by token
-	 */
-	userTokenModel.findLastValidTokenByUser = function(userId, success, error){
-		
-		var now =new Date().getTime();
+    /**
+     * Finds a token row by token
+     */
+    userTokenModel.findLastValidTokenByUser = function(userId, success, error){
 
-		userTokenModel.find({
-			where: 
-				{
-					userId: userId,
-					expiration: {
-						gt: now
-					}
-				},
-			}).success(success).error(error);
-	}
+        var now = new Date().getTime();
 
-	/**
-	 * Creates a token for an specific userId
-	 */
-	userTokenModel.createTokenForUser = function(userId, success, error){
+        userTokenModel.find({
+            where: 
+                {
+                userId: userId,
+                expiration: {
+                    gt: now
+                }
+            },
+        }).success(success).error(error);
+    }
 
-		var timestamp = new Date().getTime();
-		var timeout = config.app.tokenExpiration;
-		var expiration = (timestamp-0)+(timeout-0);
+    /**
+     * Creates a token for an specific userId
+     */
+    userTokenModel.createTokenForUser = function(userId, success, error){
 
-		var rowToInsert = {
-			token : timestamp.toString(),
-			salt  : randomString.generate(10),
-			expiration: expiration,
-			userId: userId
-		};
+        var timestamp = new Date().getTime();
+        var timeout = config.app.tokenExpiration;
+        var expiration = (timestamp-0)+(timeout-0);
 
-		//build model
-		var builtModel = userTokenModel.build(rowToInsert);
-		//encrypt token
-		builtModel.setDataValue('token', builtModel.encryptToken(timestamp.toString()));
+        var rowToInsert = {
+            token : timestamp.toString(),
+            salt  : randomString.generate(10),
+            expiration: expiration,
+            userId: userId
+        };
 
-		builtModel.save().success(success).error(error);
-	}
+        //build model
+        var builtModel = userTokenModel.build(rowToInsert);
+        //encrypt token
+        builtModel.setDataValue('token', builtModel.encryptToken(timestamp.toString()));
 
-	/**
-	 * Updates the expiration date of the token
-	 */
-	userTokenModel.updateTokenExpiration = function(token, success, error){
-		var timestamp = new Date().getTime();
-		var timeout = config.app.tokenExpiration;
-		var expiration = (timestamp-0)+(timeout-0);
+        builtModel.save().success(success).error(error);
+    }
 
-		var successUpdate = function(){
-			logger.debug("Token updated successfully");
-		}
+    /**
+     * Updates the expiration date of the token
+     */
+    userTokenModel.updateTokenExpiration = function(token, success, error) {
+        var timestamp = new Date().getTime();
+        var timeout = config.app.tokenExpiration;
+        var expiration = (timestamp-0)+(timeout-0);
 
-		var errorUpdate = function(error){
-			// swallow it?
-			logger.error(error);
-		}
+        var successUpdate = function(){
+            logger.debug("Token updated successfully");
+        }
 
-		//update expiration where token = token
-		userTokenModel.update({expiration: expiration}, {token: token}, successUpdate, errorUpdate);
-	}
+        var errorUpdate = function(error){
+            // swallow it?
+            logger.error(error);
+        }
 
+        //update expiration where token = token
+        userTokenModel.update({expiration: expiration}, {token: token}, successUpdate, errorUpdate);
+    }
 
-	return userTokenModel;
+    return userTokenModel;
 };

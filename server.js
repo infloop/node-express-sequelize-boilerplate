@@ -28,4 +28,4 @@ require('./app/route')(app, passport);
 //start app on mentioned port
 app.listen(config.app.port);
 
-logger.info('listening on port '+config.app.port);
+logger.info('listening on port '+ config.app.port);
