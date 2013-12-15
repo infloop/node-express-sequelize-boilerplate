@@ -15,11 +15,11 @@ describe('RoleRepository', function () {
 			arrayObjs.push({ name: "prueba" + i });
 		}
 		
-        var success = function(){
+        var success = function() {
 			cb();
 		}
 
-		var error = function(err){
+		var error = function(err) {
 			throw err;
 		}
 
@@ -41,7 +41,7 @@ describe('RoleRepository', function () {
 				
 				done();	
 
-			}).error(function(error){
+			}).error(function(error) {
 				throw error;
 			});
 
@@ -53,9 +53,9 @@ describe('RoleRepository', function () {
 			var totalRegisters = 2;
 
 			//this is the callback function that gets exectuted after creating example data in db
-			var find = function(){
+			var find = function() {
 				
-				var success = function(result){
+				var success = function(result) {
 
 					result.length.should.equal(totalRegisters);
 
@@ -66,7 +66,7 @@ describe('RoleRepository', function () {
 					done();
 				}
 
-				var error = function(err){
+				var error = function(err) {
 					throw err;
 				}
 
@@ -103,7 +103,7 @@ describe('RoleRepository', function () {
 				
 				done();	
 
-			}).error(function(error){
+			}).error(function(error) {
 				throw error;
 			});
 		});
@@ -117,7 +117,7 @@ describe('RoleRepository', function () {
 			//this is the callback function that gets exectuted after creating example data in db
 			var findByRolename = function() {
 				
-				var success = function(result){
+				var success = function(result) {
 
 					result.name.should.equal(rolename);
 
@@ -125,7 +125,7 @@ describe('RoleRepository', function () {
 					done();
 				}
 
-				var error = function(err){
+				var error = function(err) {
 					throw err;
 				}
 
@@ -135,7 +135,6 @@ describe('RoleRepository', function () {
 
 			//first create some example roles
 			createRoles(totalRegisters, findByRolename);
-			
 		});
 	});
 });

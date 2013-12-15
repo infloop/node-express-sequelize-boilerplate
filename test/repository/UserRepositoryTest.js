@@ -37,11 +37,11 @@ describe('UserRepository', function () {
 			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
 			
 			//create table
-			userRepository.sync({force: true}).success(function(){
+			userRepository.sync({force: true}).success(function() {
 				
 				done();	
 
-			}).error(function(error){
+			}).error(function(error) {
 				throw error;
 			});
 
@@ -53,9 +53,9 @@ describe('UserRepository', function () {
 			var totalRegisters = 2;
 
 			//this is the callback function that gets exectuted after creating example data in db
-			var find = function(){
+			var find = function() {
 				
-				var success = function(result){
+				var success = function(result) {
 
 					result.length.should.equal(totalRegisters);
 
@@ -66,7 +66,7 @@ describe('UserRepository', function () {
 					done();
 				}
 
-				var error = function(err){
+				var error = function(err) {
 					throw err;
 				}
 
@@ -103,7 +103,7 @@ describe('UserRepository', function () {
 				
 				done();	
 
-			}).error(function(error){
+			}).error(function(error) {
 				throw error;
 			});
 
@@ -117,9 +117,9 @@ describe('UserRepository', function () {
 			var username = "prueba1";
 
 			//this is the callback function that gets exectuted after creating example data in db
-			var findByUsername = function(){
+			var findByUsername = function() {
 				
-				var success = function(result){
+				var success = function(result) {
 
 					result.username.should.equal(username);
 
@@ -127,7 +127,7 @@ describe('UserRepository', function () {
 					done();
 				}
 
-				var error = function(err){
+				var error = function(err) {
 					throw err;
 				}
 
