@@ -14,11 +14,11 @@ module.exports.all = function(req, res){
 
     var userRepository = repositoryFactory.getUserRepository(req.app);
 
-    var success = function(result){
-        res.json(userResource.buildList(result));
+    var success = function(result) {
+        res.status(200).json(userResource.buildList(result));
     }
 
-    var error = function(err){
+    var error = function(err) {
         res.status(500).json(err);
     }
 
