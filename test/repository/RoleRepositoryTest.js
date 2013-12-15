@@ -1,21 +1,21 @@
 var logger = require("../../config/logger");
 var should = require('should');
 
-var userRepository;
+var roleRepository;
 
 var sequelize;
 
-describe('UserRepository', function () {
+describe('RoleRepository', function () {
 
-	var createUsers = function(total, cb){
+	var createRoles = function(total, cb) {
 
 		var arrayObjs = [];
 
 		for(var i = 0; i < total ; i++) {
-			arrayObjs.push({ username: "prueba" + i });
+			arrayObjs.push({ name: "prueba" + i });
 		}
-
-		var success = function(){
+		
+        var success = function(){
 			cb();
 		}
 
@@ -23,7 +23,7 @@ describe('UserRepository', function () {
 			throw err;
 		}
 
-		userRepository.bulkCreate(arrayObjs).success(success).error(error);
+		roleRepository.bulkCreate(arrayObjs).success(success).error(error);
 	}
 
 
@@ -34,10 +34,10 @@ describe('UserRepository', function () {
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
 			
 			//create table
-			userRepository.sync({force: true}).success(function(){
+			roleRepository.sync({force: true}).success(function() {
 				
 				done();	
 
@@ -48,7 +48,7 @@ describe('UserRepository', function () {
 			
 		});
 
-		it('should return all users OK', function (done) {
+		it('should return all roles OK', function (done) {
 	
 			var totalRegisters = 2;
 
@@ -79,49 +79,47 @@ describe('UserRepository', function () {
 				}
 
 
-				userRepository.getAllUsers(options, success, error);
+				roleRepository.getAllRoles(options, success, error);
 			};
 
-			//first create some example users
-			createUsers(totalRegisters, find);
+			//first create some example roles
+			createRoles(totalRegisters, find);
 			
 		});
 
 	});
 
-	describe('findByUsername method', function () {
+	describe('getRoleByName method', function () {
 
 		before(function (done) {
 			
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
 			
 			//create table
-			userRepository.sync({force: true}).success(function(){
+			roleRepository.sync({force: true}).success(function(){
 				
 				done();	
 
 			}).error(function(error){
 				throw error;
 			});
-
-			
 		});
 
-		it('should find a user', function (done) {
+		it('should find a role', function (done) {
 	
 			var totalRegisters = 2;
 
-			var username = "prueba1";
+			var rolename = "prueba1";
 
 			//this is the callback function that gets exectuted after creating example data in db
-			var findByUsername = function(){
+			var findByRolename = function() {
 				
 				var success = function(result){
 
-					result.username.should.equal(username);
+					result.name.should.equal(rolename);
 
 					//here the test ends
 					done();
@@ -132,14 +130,12 @@ describe('UserRepository', function () {
 				}
 
 
-				userRepository.findByUsername(username, success, error);
+				roleRepository.getRoleByName(rolename, success, error);
 			};
 
-			//first create some example users
-			createUsers(totalRegisters, findByUsername);
+			//first create some example roles
+			createRoles(totalRegisters, findByRolename);
 			
 		});
-
 	});
-
 });
