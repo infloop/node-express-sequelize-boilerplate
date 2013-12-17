@@ -12,6 +12,7 @@ module.exports = function(sequelize, DataTypes) {
 
     name: {
     	type : DataTypes.STRING,
+        unique: true,
     	validate: {
     		notNull: true,
     		notEmpty: true,

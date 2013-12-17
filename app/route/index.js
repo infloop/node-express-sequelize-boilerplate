@@ -16,7 +16,7 @@ module.exports = function (app, passport) {
      *  Check the user is logged in and has the required permissions for every request
      *  except for the public routes above.
      */
-    app.all('*', [authorization.requiresLogin, authorization.checkIsAuthorizedToAccess]);
+    //app.all('*', [authorization.requiresLogin, authorization.checkIsAuthorizedToAccess]);
 
 	//user specific routes
 	userRoutes(app, passport);

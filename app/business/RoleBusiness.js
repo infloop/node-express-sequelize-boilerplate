@@ -32,17 +32,20 @@ module.exports.all = function(req, res) {
 /*
  * Creates a new role
  */
-
-module.exports.create = function(req, res){
+module.exports.create = function(req, res) {
 
     var roleRepository = repositoryFactory.getRoleRepository(req.app);
 
-    var success = function(role){
-        res.json(role);
+    var success = function(role) {
+
+        if (role) {
+
+            res.status(201).json(role);
+        }
     }
 
-    var error = function(error){
-        logger.error(error);
+    var error = function(error) {
+
         res.status(500).json(error);
     }
 
