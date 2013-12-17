@@ -1,6 +1,7 @@
 var logger = require("../../config/logger");
 var repositoryFactory = require("../repository/RepositoryFactory");
 var constants = require("../../config/constants");
+var routesConstants = require("../../config/routesConstants");
 // Load configurations according to the selected environment
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
@@ -77,8 +78,10 @@ exports.requiresLogin = function(req, res, next) {
 
     var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
 
-    //get the cookie
-    var cookie = req.signedCookies[config.app.cookieName];
+    //get the token
+    var cookie = req.get(constants.tokenHeader);
+
+    logger.info("The token::: "+cookie);
 
     if(!cookie) {		
         return error401(res, "No autorizado");	
@@ -194,7 +197,7 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
     };
 
     
-    var publicResourceList = constants.getPublicRoutes();
+    var publicResourceList = routesConstants.getPublicRoutes();
 
     if (isRequestingAPublicResource(publicResourceList, httpVerb, uri)) {
 

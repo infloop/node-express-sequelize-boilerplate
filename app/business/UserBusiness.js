@@ -45,10 +45,7 @@ module.exports.doLogin = function(req, res) {
 
     var success = function(token){
         if(token){
-            var cookieName = config.app.cookieName;
-            //set cookie
-            res.cookie(cookieName, token.token, { signed: true });
-            return res.json("OK");        
+            return res.json(token.token);        
         }
 
         return res.status(401).json("Token not found");

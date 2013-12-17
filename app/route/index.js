@@ -4,11 +4,19 @@ var publicRoutes = require("./PublicRoutes");
 var userRoutes = require("./UserRoutes");
 var roleRoutes = require("./RoleRoutes");
 var authorization = require("../auth/Authorization");
+var constants = require("../../config/constants");
 
 /**
  * Main function to bootstrap all routes of this app
  */
 module.exports = function (app, passport) {
+
+	
+	app.all('*', function(req, res, next) {
+	  res.header("Access-Control-Allow-Origin", "*");
+	  res.header("Access-Control-Allow-Headers", "X-Requested-With, "+constants.tokenHeader);
+	  next();
+	});
 
 	publicRoutes(app, passport);
 

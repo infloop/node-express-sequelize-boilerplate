@@ -17,7 +17,7 @@
 			var password=$("#password").val();
 			$.ajax({
 				type: "POST",
-				url: "/api/users/login",
+				url: "/api/sessions",
 				data: "username="+username+"&password="+password,
 			   	success: function(response){    
 					window.location="/";
