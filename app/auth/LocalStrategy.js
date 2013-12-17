@@ -1,17 +1,23 @@
 var logger = require("../../config/logger");
 var LocalStrategy = require('passport-local').Strategy;
 var repositoryFactory = require("../repository/RepositoryFactory");
+var constants = require("../../config/constants");
 
 
 module.exports = function (passport, config, app) {
 
 	// use local strategy
-	passport.use(new LocalStrategy(
+	passport.use(new LocalStrategy({passReqToCallback: true},
 
-		function(username, password, done) {
+		function(req, username, password, done) {
 
 			var userRepository = repositoryFactory.getUserRepository(app);
 			var userTokenRepository = repositoryFactory.getUserTokenRepository(app);
+			
+			var type = constants.client.web;
+			if(req.body.type){
+				type = constants.client.mobile;
+			}
 
 			//local variable to store the successfully logged in user
 			var loggedInUser = false;
@@ -44,7 +50,7 @@ module.exports = function (passport, config, app) {
 					loggedInUser = user;
 
 					//create token
-					userTokenRepository.createTokenForUser(loggedInUser.id, successGeneratingToken, errorGeneratingToken);
+					userTokenRepository.createTokenForUser(loggedInUser.id, type, successGeneratingToken, errorGeneratingToken);
 
 					return;
 				}
@@ -55,7 +61,7 @@ module.exports = function (passport, config, app) {
 
 			//database error verifying user in login
 			var error = function(error){
-				logger.error("LocalStrategy - database error when logging in");
+				logger.error("LocalStrategy - database error when loggin in");
 				return done(error);
 			}
 

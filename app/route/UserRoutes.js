@@ -1,7 +1,7 @@
 /**
  * This module represents all resources related to users
  */
-var constants = require("../../config/constants");
+var routesConstants = require("../../config/routesConstants");
 var userBusiness = require("../business/UserBusiness");
 var authorization = require("../auth/Authorization");
 
@@ -11,7 +11,7 @@ var authorization = require("../auth/Authorization");
  */
 module.exports = function (app, passport) {
 
-    var routes = constants.getRoutes();
+    var routes = routesConstants.getRoutes();
 
 	//all users
 	app.get(routes.users, userBusiness.all);

@@ -2,7 +2,7 @@
  * This module represents all routes related to roles
  */
 var logger = require("../../config/logger");
-var constants = require("../../config/constants");
+var routesConstants = require("../../config/routesConstants");
 var roleBusiness = require("../business/RoleBusiness");
 
 /**
@@ -11,7 +11,7 @@ var roleBusiness = require("../business/RoleBusiness");
  */
 module.exports = function (app, passport) {
 
-    var routes = constants.getRoutes();
+    var routes = routesConstants.getRoutes();
 
     // Get all roles.
     app.get(routes.roles, roleBusiness.all);

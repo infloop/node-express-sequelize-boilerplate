@@ -36,27 +36,34 @@ module.exports = function(userTokenModel) {
     }
 
     /**
-     * Creates a token for an specific userId
+     * Creates a token for an specific userId. It removes all other tokens before.
      */
-    userTokenModel.createTokenForUser = function(userId, success, error){
+    userTokenModel.createTokenForUser = function(userId, type, success, error){
 
-        var timestamp = new Date().getTime();
-        var timeout = config.app.tokenExpiration;
-        var expiration = (timestamp-0)+(timeout-0);
+        var successDelete = function(){
+            //then create a new token
+            var timestamp = new Date().getTime();
+            var timeout = config.app.tokenExpiration;
+            var expiration = (timestamp-0)+(timeout-0);
 
-        var rowToInsert = {
-            token : timestamp.toString(),
-            salt  : randomString.generate(10),
-            expiration: expiration,
-            userId: userId
-        };
+            var rowToInsert = {
+                token : timestamp.toString(),
+                salt  : randomString.generate(10),
+                expiration: expiration,
+                type: type,
+                userId: userId
+            };
 
-        //build model
-        var builtModel = userTokenModel.build(rowToInsert);
-        //encrypt token
-        builtModel.setDataValue('token', builtModel.encryptToken(timestamp.toString()));
+            //build model
+            var builtModel = userTokenModel.build(rowToInsert);
+            //encrypt token
+            builtModel.setDataValue('token', builtModel.encryptToken(timestamp.toString()));
 
-        builtModel.save().success(success).error(error);
+            builtModel.save().success(success).error(error);
+        }
+
+        //first delete all other tokens of the same type
+        userTokenModel.destroy({type: type, userId: userId}).success(successDelete).error(error);
     }
 
     /**

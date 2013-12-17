@@ -26,7 +26,14 @@ module.exports = function(sequelize, DataTypes) {
                 notNull: true,
                 notEmpty: true
             }
-        }
+        },
+        type: {
+            type: DataTypes.STRING,
+            validate: {
+                notNull: true,
+                notEmpty: true
+            }
+        },
 
     }, {
 
@@ -52,6 +59,8 @@ module.exports = function(sequelize, DataTypes) {
         }
 
     });
+
+    //UserToken.sync({force: true});
 
     return UserToken;
 };
