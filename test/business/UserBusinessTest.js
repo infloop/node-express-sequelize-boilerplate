@@ -6,56 +6,56 @@ var constants = require("../../config/constants");
 
 describe('UserBusiness', function () {
 
-	describe('all method', function () {
+    describe('all method', function () {
 
-		it('should return 200 OK', function (done) {
+        it('should return 200 OK', function (done) {
 
-			//attention: it's rewire not require :)
-			var userBusiness = rewire("../../app/business/UserBusiness");
+            //attention: it's rewire not require :)
+            var userBusiness = rewire("../../app/business/UserBusiness");
 
-			var expectedResult = {
-				foo: 1
-			}
+            var expectedResult = {
+                foo: 1
+            }
 
-			var expectedStatus = 200;
+            var expectedStatus = 200;
 
-			var request = {
-				param: function(name){
-					//mocks offset and limit
-					return 10;
-				}
-			};
+            var request = {
+                param: function(name){
+                    //mocks offset and limit
+                    return 10;
+                }
+            };
 
-			var response = {
-			    render: function(view, viewData) {
-			        view.should.equal(constants.routes.users);
-			    },
+            var response = {
+                render: function(view, viewData) {
+                    view.should.equal(constants.getRoutes().users);
+                },
                 status: function(status) {
-			    	status.should.equal(expectedStatus);
-			    	return this;
-			    },
-			    json: function(result) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+                json: function(result) {
 
-			    	result.should.equal(expectedResult);
+                    result.should.equal(expectedResult);
                     done();
-			    }
-			};
+                }
+            };
 
-			/**
-			 * Mock all needed methods and properties to the element we try to test
-			 */
-			var mocks = function() {
+            /**
+             * Mock all needed methods and properties to the element we try to test
+             */
+            var mocks = function() {
 
-				//mock getRepository function (i.e. the repository). This way, we do not need the database connection
-				userBusiness.__set__("repositoryFactory", {
-						getUserRepository: function(req){
-							return {
-								getAllUsers: function(options, success, error){
-									success(expectedResult);
-								}
-							}
-						}
-				});
+                //mock getRepository function (i.e. the repository). This way, we do not need the database connection
+                userBusiness.__set__("repositoryFactory", {
+                    getUserRepository: function(req) {
+                        return {
+                            getAllUsers: function(options, success, error) {
+                                success(expectedResult);
+                            }
+                        }
+                    }
+                });
 
                 userBusiness.__set__("userResource", {
 
@@ -67,67 +67,67 @@ describe('UserBusiness', function () {
                     }
                 })
 
-			}
+            }
 
-			//set up mocks
-			mocks();
+            //set up mocks
+            mocks();
 
-			userBusiness.all(request, response);
-		});
-		
-		it('should return 500 error if something wrong happens at persistence layer', function(done){
+            userBusiness.all(request, response);
+        });
 
-			//attention: it's rewire not require :)
-			var userBusiness = rewire("../../app/business/UserBusiness");
+        it('should return 500 error if something wrong happens at persistence layer', function(done){
 
-			var expectedResult= {
-				foo: 1
-			}
+            //attention: it's rewire not require :)
+            var userBusiness = rewire("../../app/business/UserBusiness");
 
-			var expectedStatus = 500;
+            var expectedResult = {
+                foo: 1
+            }
 
-			var request = {
-				param: function(name) {
-					//mocks offset and limit
-					return 10;
-				}
-			};
+            var expectedStatus = 500;
 
-			var response = {
-			    render: function(view, viewData) {
-			        view.should.equal(constants.routes.documentType);
-			    },
-			    status: function(status) {
-			    	status.should.equal(expectedStatus);
-			    	return this;
-			    },
-			    json: function(result) {
-			    	result.should.equal(expectedResult);
-			    	done();
-			    }
-			};
+            var request = {
+                param: function(name) {
+                    //mocks offset and limit
+                    return 10;
+                }
+            };
 
-			/**
-			 * Mock all needed methods and properties to the element we try to test
-			 */
-			var mocks = function(){
+            var response = {
+                render: function(view, viewData) {
+                    view.should.equal(constants.getRoutes().documentType);
+                },
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+                json: function(result) {
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
 
-				//mock getRepository function (i.e. the repository). This way, we do not need the database connection
-				userBusiness.__set__("repositoryFactory", {
-						getUserRepository: function(req){
-							return {
-								getAllUsers: function(options, success, error){
-									error(expectedResult);
-								}
-							}
-						}
-				});
-			}
+            /**
+             * Mock all needed methods and properties to the element we try to test
+             */
+            var mocks = function(){
 
-			//set up mocks
-			mocks();
+                //mock getRepository function (i.e. the repository). This way, we do not need the database connection
+                userBusiness.__set__("repositoryFactory", {
+                    getUserRepository: function(req) {
+                        return {
+                            getAllUsers: function(options, success, error) {
+                                error(expectedResult);
+                            }
+                        }
+                    }
+                });
+            }
 
-			userBusiness.all(request, response);
-		});
-	});
+            //set up mocks
+            mocks();
+
+            userBusiness.all(request, response);
+        });
+    });
 });
