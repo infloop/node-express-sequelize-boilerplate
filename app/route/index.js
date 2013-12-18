@@ -3,6 +3,7 @@ var logger = require("../../config/logger");
 var publicRoutes = require("./PublicRoutes");
 var userRoutes = require("./UserRoutes");
 var roleRoutes = require("./RoleRoutes");
+var tokenRoutes = require("./TokenRoutes");
 var authorization = require("../auth/Authorization");
 var constants = require("../../config/constants");
 
@@ -32,4 +33,7 @@ module.exports = function (app, passport) {
 
 	//role specific routes
 	roleRoutes(app, passport);
+
+	//token specific routes
+	tokenRoutes(app, passport);
 }

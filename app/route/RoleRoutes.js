@@ -20,8 +20,8 @@ module.exports = function (app, passport) {
     app.put(routes.roles, roleBusiness.create);
 
     // Get all role permissions
-    app.get(routes.permissions, roleBusiness.getRolePermissions);
+    app.get(routes.rolePermissions, roleBusiness.getRolePermissions);
 
     // add a new permission to a role.
-    app.post(routes.permissions, roleBusiness.addPermissionToRole);
+    app.post(routes.rolePermissions, roleBusiness.addPermissionToRole);
 };

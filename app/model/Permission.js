@@ -37,6 +37,8 @@ module.exports = function(sequelize, DataTypes) {
 
   });
 
+  //Permission.sync({force:true});
+
   return Permission;
 
 };
