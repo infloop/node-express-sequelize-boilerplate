@@ -26,7 +26,6 @@ describe('UserRepository', function () {
 		userRepository.bulkCreate(arrayObjs).success(success).error(error);
 	}
 
-
 	describe('all method', function () {
 
 		before(function (done) {
