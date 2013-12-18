@@ -6,6 +6,8 @@ var routesConstants = require("../../config/routesConstants");
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
+var that = this;
+
 /**
  * Similar to 403 Forbidden, but specifically for use when 
  * authentication is required and has failed or has not yet been provided
@@ -70,6 +72,22 @@ exports.requiresLoginAndRedirect = function(req, res, next) {
     userTokenRepository.findByToken(cookie, success, error);
 }
 
+
+var getTokenFromRequest2 = function(req){
+    var token = req.get(constants.tokenHeader);
+    if(!token){
+        token = "";
+    }
+    return token;
+}
+
+
+
+exports.getTokenFromRequest = function(req) {
+    return getTokenFromRequest2(req);
+}
+    
+
 /*
  *  Generic require login routing middleware. Redirects to
  * /login if no cookie found
@@ -79,9 +97,9 @@ exports.requiresLogin = function(req, res, next) {
     var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
 
     //get the token
-    var cookie = req.get(constants.tokenHeader);
+    var cookie = getTokenFromRequest2(req);
 
-    logger.info("The token::: "+cookie);
+    logger.debug("TOKEN:: "+cookie);
 
     if(!cookie) {		
         return error401(res, "No autorizado");	
@@ -140,7 +158,7 @@ function isRequestingAPublicResource(publicResourceList, httpVerb, uri) {
 
 exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
-    var token = req.signedCookies[config.app.cookieName];
+    var token = getTokenFromRequest2(req);
 
     var route = req.route;
     var httpVerb = route.method;

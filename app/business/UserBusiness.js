@@ -1,11 +1,13 @@
 var logger = require("../../config/logger");
 var constants = require("../../config/constants");
 var repositoryFactory = require("../repository/RepositoryFactory");
+var authorization = require("../auth/Authorization");
 // Load configurations according to the selected environment
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
 var userResource = require("../resource/UserResource");
+var permissionResource = require("../resource/PermissionResource");
 
 /**
  * This method returns (in the response) all users
