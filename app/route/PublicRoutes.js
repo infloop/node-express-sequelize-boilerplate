@@ -14,17 +14,6 @@ module.exports = function (app, passport) {
 
     var routes = routesConstants.getRoutes();
 
-    //index page - requires authorization
-	app.get("/", authorization.requiresLoginAndRedirect, function(req, res) {
-        
-        logger.debug("Auth user is: "+req.loggedInUser+" !!!!!");
-        res.render('index');
-    });
-
-	app.get("/login", function(req, res){
-        res.render('login');
-    });
-
     //user is logged in
     app.get(routes.sessions, authorization.requiresLogin, function(req, res){
         res.json("OK");
@@ -33,6 +22,7 @@ module.exports = function (app, passport) {
     //logout
     app.delete(routes.sessions, userBusiness.doLogout);
 
+    //login
     app.post(routes.sessions, passport.authenticate('local', { session: false }),
 			userBusiness.doLogin);
 };
