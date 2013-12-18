@@ -81,7 +81,7 @@ module.exports.create = function(req, res){
     var userRepository = repositoryFactory.getUserRepository(req.app);
 
     var success = function(user){
-        res.json(user);
+        res.status(201).json(user);
     }
 
     var error = function(error){
