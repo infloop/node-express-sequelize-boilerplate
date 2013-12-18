@@ -29,8 +29,6 @@ module.exports.getPublicRoutes = function() {
     var routes = this.getRoutes();
 
     var publicResources = [
-        { httpVerb: 'get', uri: routes.index },
-        { httpVerb: 'get', uri: routes.login },
         { httpVerb: 'post', uri: routes.userLogin },
         { httpVerb: 'get', uri: routes.userLogout },
         { httpVerb: 'post', uri: routes.sessions },

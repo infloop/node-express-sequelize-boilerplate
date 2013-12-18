@@ -19,10 +19,4 @@ module.exports = function (app, passport) {
 	//new user
 	app.put(routes.users, userBusiness.create);
 
-	//login
-	app.post(routes.userLogin, passport.authenticate('local', { session: false }),
-			userBusiness.doLogin);
-
-	//logout
-	app.get(routes.userLogout, userBusiness.doLogout);
 };

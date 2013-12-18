@@ -17,6 +17,7 @@ module.exports = function (app, passport) {
 	  res.header("Access-Control-Allow-Headers", "X-Requested-With, "+constants.tokenHeader);
 	  next();
 	});
+	
 
 	publicRoutes(app, passport);
 
