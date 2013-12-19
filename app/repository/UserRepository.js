@@ -15,5 +15,13 @@ module.exports = function(userModel) {
 		userModel.find({where: {username: username}}).success(success).error(error);
 	}
 
+    userModel.updateByUsername = function(username, user, success, error) {
+        userModel.update(user, {username: username}).success(success).error(error);
+	}
+
+    userModel.deleteByUsername = function(username, success, error) {
+        userModel.destroy({username: username}).success(success).error(error);
+    }
+
 	return userModel;
 };

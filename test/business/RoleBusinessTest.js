@@ -245,7 +245,7 @@ describe('RoleBusiness', function () {
             };
 
             /**
-             * Mock all needed methods and properties to the element we try to test
+             * Mock all the methods and properties needed to the element we try to test
              */
             var mocks = function() {
 
@@ -292,6 +292,86 @@ describe('RoleBusiness', function () {
             mocks();
 
             roleBusiness.create(request, response); 
+        });
+    });
+
+    describe('getRolePermissions method', function() {
+
+        it('should return 200 and a list of the permissions of the given role', function(done) {
+
+            var roleBusiness = rewire("../../app/business/RoleBusiness");
+
+            var rolename = 'admin';
+
+            var request = {
+
+                params: {
+
+                    'rolename': rolename
+                }
+            };
+
+            var expectedStatus = 200;
+
+            var expectedResult = {
+
+                'permissions' : '[]'
+            };
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+                json: function(result) {
+
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            // Verify the request contains the expected params.
+            var params = request.params;
+            params.should.not.be.empty;
+            params.should.have.keys('rolename');
+            params.rolename.should.include('admin');
+
+            /**
+             * Mock all the methods and properties needed to the element we try to test
+             */
+            var mocks = function() {
+
+                roleBusiness.__set__("repositoryFactory", {
+
+                    getRoleRepository: function(req) {
+                        return roleRepository;
+                    },
+
+                    getPermissionRepository: function(req) {
+                        return permissionRepository;
+                    }
+                });
+
+                roleBusiness.__set__("roleRepository", {
+
+                    getRoleByName: function(rolename, success, error) {
+                        success(success);
+                    }
+                });
+
+                roleBusiness.__set__("permissionRepository", {
+
+                    findPermissionsByRole: function(role, success, error) {
+                        success(expectedResult);
+                    }
+                });
+            };
+
+            //set up mocks
+            mocks();
+
+            roleBusiness.getRolePermissions(request, response);
         });
     });
 });
