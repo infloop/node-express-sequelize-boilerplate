@@ -1,35 +1,35 @@
 var logger = require("../../config/logger");
 
 module.exports = function(sequelize, DataTypes) {
-  
-  var Role = sequelize.define('role', {
-    
-    id: { 
-      type: DataTypes.INTEGER, 
-      primaryKey: true, 
-      autoIncrement: true
-    },
 
-    name: {
-    	type : DataTypes.STRING,
-        unique: true,
-    	validate: {
-    		notNull: true,
-    		notEmpty: true,
-    	}
-    },
-  
-  }, {
+    var Role = sequelize.define('role', {
 
-	validate : {
+        id: { 
+            type: DataTypes.INTEGER, 
+            primaryKey: true, 
+            autoIncrement: true
+        },
 
-	},
+        name: {
+            type : DataTypes.STRING,
+            unique: true,
+            validate: {
+                notNull: true,
+                notEmpty: true,
+            }
+        },
 
-  instanceMethods: {
+    }, {
 
-  }
+        validate : {
 
-  });
+        },
 
-  return Role;
+        instanceMethods: {
+
+        }
+
+    });
+
+    return Role;
 };

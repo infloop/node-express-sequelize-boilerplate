@@ -5,7 +5,7 @@ var userTokenRepository;
 
 var sequelize;
 
-describe('UserToken', function () {
+describe('UserToken Repository', function () {
 
 	var createUserTokens = function(total, cb){
 		var arrayObjs = [];
@@ -136,6 +136,7 @@ describe('UserToken', function () {
 		it('create token OK', function (done) {
 	
 			var userId = 1;
+			var type = "web";
 
 			var success = function(result){
 				
@@ -156,7 +157,7 @@ describe('UserToken', function () {
 
 
 
-			userTokenRepository.createTokenForUser(userId, success, error);
+			userTokenRepository.createTokenForUser(userId, type, success, error);
 			
 		});
 

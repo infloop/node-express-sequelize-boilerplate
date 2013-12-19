@@ -19,5 +19,15 @@ module.exports = function(roleModel) {
         roleModel.find({ where: { name: roleName } }).success(success).error(error);
     }
 
+    roleModel.updateRoleByName = function(roleName, updatedRole, success, error) {
+
+        roleModel.update(updatedRole, { name: roleName }).success(success).error(error);
+    }
+
+    roleModel.deleteRoleByName = function(roleName, success, error) {
+
+        roleModel.destroy({ name: roleName }).success(success).error(error);
+    }
+
 	return roleModel;
 };

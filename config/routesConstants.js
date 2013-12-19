@@ -13,12 +13,17 @@ module.exports.getRoutes = function() {
 
         // Users
         users: "/api/users",
+        specificUSer: "/api/users/:username",
 
         // Roles
         roles: "/api/roles",
+        specificRole: "/api/roles/:rolename",
 
-        // Permissions
-        permissions: "/api/roles/:role/permissions"
+        //Token - Permissions relationship
+        tokenPermissions: "/api/tokens/permissions",
+
+        // Roles - Permissions relationship
+        rolePermissions: "/api/roles/:rolename/permissions"
     }
 
     return routes;
@@ -29,8 +34,6 @@ module.exports.getPublicRoutes = function() {
     var routes = this.getRoutes();
 
     var publicResources = [
-        { httpVerb: 'post', uri: routes.userLogin },
-        { httpVerb: 'get', uri: routes.userLogout },
         { httpVerb: 'post', uri: routes.sessions },
         { httpVerb: 'get', uri: routes.sessions },
         { httpVerb: 'delete', uri: routes.sessions }

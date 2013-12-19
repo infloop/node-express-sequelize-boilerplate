@@ -1,42 +1,44 @@
 var logger = require("../../config/logger");
 
 module.exports = function(sequelize, DataTypes) {
-  
-  var Permission = sequelize.define('permission', {
-    
-    id: { 
-      type: DataTypes.INTEGER, 
-      primaryKey: true, 
-      autoIncrement: true
-    },
 
-    httpVerb: {
-    	type : DataTypes.STRING,
-    	validate: {
-    		notNull: true,
-    		notEmpty: true,
-    	}
-    },
+    var Permission = sequelize.define('permission', {
 
-    uri: {
-        type : DataTypes.STRING,
-    	validate: {
-    		notNull: true,
-    		notEmpty: true,
-    	}
-    }
-  
-  }, {
+        id: { 
+            type: DataTypes.INTEGER, 
+            primaryKey: true, 
+            autoIncrement: true
+        },
 
-	validate : {
+        httpVerb: {
+            type : DataTypes.STRING,
+            validate: {
+                notNull: true,
+                notEmpty: true,
+            }
+        },
 
-	},
+        uri: {
+            type : DataTypes.STRING,
+            validate: {
+                notNull: true,
+                notEmpty: true,
+            }
+        }
 
-  instanceMethods: {
-  }
+    }, {
 
-  });
+        validate : {
 
-  return Permission;
+        },
+
+        instanceMethods: {
+        }
+
+    });
+
+    //Permission.sync({force:true});
+
+    return Permission;
 
 };

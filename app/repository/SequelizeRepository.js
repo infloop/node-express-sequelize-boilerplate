@@ -26,5 +26,17 @@ module.exports = function(sequelizeModel) {
         .success(success).error(error);
     }
 
+
+    sequelizeModel.findPermissionsByToken = function(token, success, error){
+
+        var rawQuery = 'SELECT p.httpVerb, p.uri FROM userTokens ut, users u, roles r, permissions p ' + 
+            'WHERE ut.token = :queryToken AND ut.userId = u.id AND u.roleId = r.id AND r.id = p.roleId GROUP BY r.id';
+
+        sequelizeModel.query(rawQuery, null, { plain: true, raw: true }, { queryToken: token })
+            .success(success).error(error);
+
+
+    }
+
     return sequelizeModel;
 }

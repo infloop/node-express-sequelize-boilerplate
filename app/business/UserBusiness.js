@@ -1,11 +1,13 @@
 var logger = require("../../config/logger");
 var constants = require("../../config/constants");
 var repositoryFactory = require("../repository/RepositoryFactory");
+var authorization = require("../auth/Authorization");
 // Load configurations according to the selected environment
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
 var userResource = require("../resource/UserResource");
+var permissionResource = require("../resource/PermissionResource");
 
 /**
  * This method returns (in the response) all users
@@ -79,7 +81,7 @@ module.exports.create = function(req, res){
     var userRepository = repositoryFactory.getUserRepository(req.app);
 
     var success = function(user){
-        res.json(user);
+        res.status(201).json(user);
     }
 
     var error = function(error){
@@ -119,4 +121,46 @@ module.exports.getUserRoleByToken = function(req, res) {
 
     var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
     sequelizeRepository.findRoleByToken(tokenSuccess, tokenError);
+}
+
+module.exports.getUserByUsername = function(req, res) {
+
+    var success = function(user) {
+        res.status(200).json(user);
+    };
+
+    var error = function(error) {
+        res.status(500).json(error);
+    };
+
+    var userRepository = repositoryFactory.getUserRepository(req.app);
+    userRepository.findByUsername(req.params.username, success, error);
+}
+
+module.exports.updateUserByUsername = function(req, res) {
+
+    var success = function(user) {
+        res.status(200).json(user);
+    };
+
+    var error = function(error) {
+        res.status(500).json(error);
+    };
+
+    var userRepository = repositoryFactory.getUserRepository(req.app);
+    userRepository.updateByUsername(req.params.username, req.body, success, error);
+}
+
+module.exports.deleteUserByUsername = function(req, res) {
+
+    var success = function(user) {
+        res.status(200).json(user);
+    };
+
+    var error = function(error) {
+        res.status(500).json(error);
+    };
+
+    var userRepository = repositoryFactory.getUserRepository(req.app);
+    userRepository.deleteByUsername(req.params.username, success, error);
 }
