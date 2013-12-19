@@ -295,6 +295,124 @@ describe('RoleBusiness', function () {
         });
     });
 
+    describe('updateRoleByName method', function () {
+
+        it('should return 200 OK', function (done) {
+
+             var roleBusiness = rewire("../../app/business/RoleBusiness");
+
+            var request = {
+
+                params: {
+
+                    'rolename' : 'admin'
+                },
+
+                body: {
+                    'name' : 'root'
+                }
+            };
+
+            var expectedStatus = 200;
+
+            var expectedResult = {
+
+                "name": "root"
+            };
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+                json: function(result) {
+
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            /**
+             * Mock all the methods and properties needed to the element we try to test
+             */
+            var mocks = function() {
+
+                roleBusiness.__set__("repositoryFactory", {
+
+                    getRoleRepository: function() {
+                        return {
+                            updateRoleByName: function(req, req, success, error) {
+                                success(expectedResult);
+                            }
+                        }
+                    }
+                });
+            };
+
+            mocks();
+
+            roleBusiness.updateRoleByName(request, response);
+        });
+    });
+
+    describe('deleteRoleByName method', function () {
+
+        it('should return 200 OK', function (done) {
+
+            var roleBusiness = rewire("../../app/business/RoleBusiness");
+
+            var request = {
+
+                params: {
+
+                    'rolename' : 'admin'
+                },
+            };
+
+            var expectedStatus = 200;
+
+            var expectedResult = {
+
+                "name": "admin"
+            };
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+                json: function(result) {
+
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            /**
+             * Mock all the methods and properties needed to the element we try to test
+             */
+            var mocks = function() {
+
+                roleBusiness.__set__("repositoryFactory", {
+
+                    getRoleRepository: function() {
+                        return {
+                            deleteRoleByName: function(req, success, error) {
+                                success(expectedResult);
+                            }
+                        }
+                    }
+                });
+            };
+
+            mocks();
+
+            roleBusiness.deleteRoleByName(request, response);
+        });
+    });
+
     describe('getRolePermissions method', function() {
 
         it('should return 200 and a list of the permissions of the given role', function(done) {

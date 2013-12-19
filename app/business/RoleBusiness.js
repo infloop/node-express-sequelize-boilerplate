@@ -53,6 +53,34 @@ module.exports.create = function(req, res) {
     roleEntry.save().success(success).error(error);
 }
 
+module.exports.updateRoleByName = function(req, res) {
+
+    var success = function(success) {
+        res.status(200).json(success);
+    };
+
+    var error = function(error) {
+        res.status(500).json(error);
+    };
+
+    var roleRepository = repositoryFactory.getRoleRepository(req.app);
+    roleRepository.updateRoleByName(req.params.rolename, req.body, success, error);
+}
+
+module.exports.deleteRoleByName = function(req, res) {
+
+    var success = function(success) {
+        res.status(200).json(success);
+    };
+
+    var error = function(error) {
+        res.status(500).json(error);
+    };
+
+    var roleRepository = repositoryFactory.getRoleRepository(req.app);
+    roleRepository.deleteRoleByName(req.params.rolename, success, error);
+}
+
 module.exports.getRolePermissions = function(req, res) {
 
     var roleSuccess = function(role) {
@@ -97,11 +125,8 @@ module.exports.addPermissionToRole = function(req, res) {
 
             var saveSuccess = function(permission) {
 
-                logger.debug("from saveSuccess");
-
                 role.addPermission(permission).success(function() {
 
-                    logger.debug("*************** HERE 123");
                     res.status(200).json("");
                 });
             };
