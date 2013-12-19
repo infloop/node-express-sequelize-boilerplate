@@ -13,15 +13,17 @@ module.exports.getRoutes = function() {
 
         // Users
         users: "/api/users",
+        specificUSer: "/api/users/:username",
 
         // Roles
         roles: "/api/roles",
+        specificRole: "/api/roles/:rolename",
 
         //Token - Permissions relationship
         tokenPermissions: "/api/tokens/permissions",
 
         // Roles - Permissions relationship
-        rolePermissions: "/api/roles/:role/permissions"
+        rolePermissions: "/api/roles/:rolename/permissions"
     }
 
     return routes;

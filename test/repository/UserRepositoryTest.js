@@ -43,8 +43,6 @@ describe('UserRepository', function () {
 			}).error(function(error) {
 				throw error;
 			});
-
-			
 		});
 
 		it('should return all users OK', function (done) {
@@ -77,7 +75,6 @@ describe('UserRepository', function () {
 					limit: limit
 				}
 
-
 				userRepository.getAllUsers(options, success, error);
 			};
 
@@ -105,8 +102,6 @@ describe('UserRepository', function () {
 			}).error(function(error) {
 				throw error;
 			});
-
-			
 		});
 
 		it('should find a user', function (done) {
@@ -130,15 +125,117 @@ describe('UserRepository', function () {
 					throw err;
 				}
 
-
 				userRepository.findByUsername(username, success, error);
 			};
 
 			//first create some example users
 			createUsers(totalRegisters, findByUsername);
-			
 		});
-
 	});
 
+    describe('updateByUsername method', function () {
+
+		before(function (done) {
+			
+			sequelize = require("../../app/model");
+
+			//connect to in-memory database
+			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			
+			//create table
+			userRepository.sync({force: true}).success(function() {
+				done();	
+
+			}).error(function(error) {
+				throw error;
+			});
+		});
+
+		it('should return success and the modified user', function (done) {
+
+            var numeroUsuarios = 5;
+
+            var verifyUserWasUpdated = function() {
+
+                var success = function(success) {
+
+                    var findSuccess = function(result) {
+
+                        result.password.should.equal(updatedUser.password);
+                        result.email.should.equal(updatedUser.email);
+                        done();
+                    };
+
+                    var findError = function(error) {
+                        throw error;
+                    };
+
+                    userRepository.findByUsername(username, findSuccess, findError);
+                };
+
+                var error = function(error) {
+                    throw error;
+                };
+
+                userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+                var username = 'prueba2';
+
+                var updatedUser = {
+                    'username' : 'prueba2',
+                    'password' : 'pwd',
+                    'email' : 'qwe@domain.com'
+                };
+                
+                userRepository.updateByUsername(username, updatedUser, success, error);
+            };
+
+            createUsers(numeroUsuarios, verifyUserWasUpdated);
+        });
+    });
+
+    describe('deleteByUsername method', function () {
+
+		before(function (done) {
+			
+			sequelize = require("../../app/model");
+
+			//connect to in-memory database
+			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			
+			//create table
+			userRepository.sync({force: true}).success(function() {
+				done();	
+
+			}).error(function(error) {
+				throw error;
+			});
+		});
+
+		it('should return success and the number of users should decrease by one', function (done) {
+
+            var numeroUsuarios = 5;
+
+            var verifyUserWasDeleted = function() {
+
+                var success = function(success) {
+
+                    userRepository.count().success(function(result) {
+
+                        result.should.equal(numeroUsuarios - 1);
+                        done();
+                    });
+                };
+
+                var error = function(error) {
+                    throw error;
+                };
+
+                userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+                var username = 'prueba2';
+                userRepository.deleteByUsername(username, success, error);
+            };
+
+            createUsers(numeroUsuarios, verifyUserWasDeleted);
+        });
+    });
 });
