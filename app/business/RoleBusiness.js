@@ -86,7 +86,7 @@ module.exports.getRolePermissions = function(req, res) {
     }
 
     var roleRepository = repositoryFactory.getRoleRepository(req.app);
-    roleRepository.getRoleByName(req.params.role, roleSuccess, roleError);
+    roleRepository.getRoleByName(req.params.rolename, roleSuccess, roleError);
 }
 
 module.exports.addPermissionToRole = function(req, res) {

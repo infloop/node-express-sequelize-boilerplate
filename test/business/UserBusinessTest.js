@@ -130,4 +130,237 @@ describe('UserBusiness', function () {
             userBusiness.all(request, response);
         });
     });
+
+    describe('getUserByUsername method', function () {
+
+        it('should return 200 OK', function (done) {
+
+            //attention: it's rewire not require :)
+            var userBusiness = rewire("../../app/business/UserBusiness");
+
+            var expectedResult = {
+                'username' : 'qwe',
+                'password' : 'pwd'
+            };
+
+            var expectedStatus = 200;
+
+            var request = {
+
+                params: {
+                    'username' : 'qwe'
+                }
+            };
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+
+                json: function(result) {
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            /**
+             * Mock all needed methods and properties to the element we try to test
+             */
+            var mocks = function() {
+
+                userBusiness.__set__("repositoryFactory", {
+                    getUserRepository: function(req) {
+                        return {
+
+                            findByUsername: function(username, success, error) {
+                                success(expectedResult);
+                            }
+                        }
+                    }
+                });
+            };
+
+            //set up mocks
+            mocks();
+
+            userBusiness.getUserByUsername(request, response);
+        });
+
+        it('should return 500 because the user with the given username does not exist', function (done) {
+
+            //attention: it's rewire not require :)
+            var userBusiness = rewire("../../app/business/UserBusiness");
+
+            var expectedResult = {
+                'error' : 'there is not a user with username qwe'
+            }
+
+            var expectedStatus = 500;
+
+            var request = {
+
+                params: {
+                    'username' : 'qwe'
+                }
+            };
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+
+                json: function(result) {
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            /**
+             * Mock all needed methods and properties to the element we try to test
+             */
+            var mocks = function() {
+
+                userBusiness.__set__("repositoryFactory", {
+                    getUserRepository: function(req) {
+                        return {
+
+                            findByUsername: function(username, success, error) {
+                                error(expectedResult);
+                            }
+                        }
+                    }
+                });
+            };
+
+            //set up mocks
+            mocks();
+
+            userBusiness.getUserByUsername(request, response);
+        });
+    });
+
+    describe('updateByUsername method', function () {
+
+        it('should return 200 OK', function (done) {
+
+            //attention: it's rewire not require :)
+            var userBusiness = rewire("../../app/business/UserBusiness");
+
+            var expectedResult = {
+                'username' : 'qwe',
+                'password' : 'pwd',
+                'email' : 'qwe@domain.com'
+            };
+
+            var expectedStatus = 200;
+
+            var request = {
+
+                params: {
+                    'username' : 'qwe'
+                },
+
+                body: {
+                    'username' : 'qwe',
+                    'password' : 'pwd',
+                    'email' : 'qwe@domain.com'
+                }
+            };
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+
+                json: function(result) {
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            /**
+             * Mock all needed methods and properties to the element we try to test
+             */
+            var mocks = function() {
+
+                userBusiness.__set__("repositoryFactory", {
+                    getUserRepository: function(req) {
+                        return {
+                            updateByUsername: function(username, user, success, error) {
+                                success(expectedResult);
+                            }
+                        }
+                    }
+                });
+            };
+
+            //set up mocks
+            mocks();
+
+            userBusiness.updateUserByUsername(request, response);
+        });
+    });
+
+    describe('deleteUserByUsername method', function () {
+
+        it('should return 200 OK', function (done) {
+
+            //attention: it's rewire not require :)
+            var userBusiness = rewire("../../app/business/UserBusiness");
+
+            var expectedResult = {
+                'username' : 'qwe',
+                'password' : 'pwd'
+            };
+
+            var expectedStatus = 200;
+
+            var request = {
+
+                params: {
+                    'username' : 'qwe'
+                }
+            };
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+
+                json: function(result) {
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            /**
+             * Mock all needed methods and properties to the element we try to test
+             */
+            var mocks = function() {
+
+                userBusiness.__set__("repositoryFactory", {
+                    getUserRepository: function(req) {
+                        return {
+                            deleteByUsername: function(username, success, error) {
+                                success(expectedResult);
+                            }
+                        }
+                    }
+                });
+            };
+
+            //set up mocks
+            mocks();
+
+            userBusiness.deleteUserByUsername(request, response);
+        });
+    });
 });
