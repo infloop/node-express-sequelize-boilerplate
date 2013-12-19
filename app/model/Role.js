@@ -15,7 +15,7 @@ module.exports = function(sequelize, DataTypes) {
             unique: true,
             validate: {
                 notNull: true,
-                notEmpty: true,
+                notEmpty: true
             }
         },
 
