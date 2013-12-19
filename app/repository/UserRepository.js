@@ -16,6 +16,7 @@ module.exports = function(userModel) {
 	}
 
     userModel.updateByUsername = function(username, user, success, error) {
+    	// update(updated entity, where clause)
         userModel.update(user, {username: username}).success(success).error(error);
 	}
 
