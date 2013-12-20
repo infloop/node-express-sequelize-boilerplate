@@ -17,7 +17,7 @@ module.exports = function (app, passport) {
     app.get(routes.roles, roleBusiness.all);
     
     // Create a new role.
-    app.put(routes.roles, roleBusiness.create);
+    app.post(routes.roles, roleBusiness.create);
 
     // Update a given role.
     app.put(routes.specificRole, roleBusiness.updateRoleByName);
