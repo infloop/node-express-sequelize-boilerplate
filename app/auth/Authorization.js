@@ -86,6 +86,15 @@ var getTokenFromRequest2 = function(req){
 exports.getTokenFromRequest = function(req) {
     return getTokenFromRequest2(req);
 }
+
+exports.getTokenType = function(req){
+    var type = constants.client.web;
+    if(req.body && req.body.type){
+        type = constants.client.mobile;
+    }
+
+    return type;
+}
     
 
 /*
