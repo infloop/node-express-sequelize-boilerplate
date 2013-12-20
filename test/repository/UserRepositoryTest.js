@@ -85,6 +85,54 @@ describe('UserRepository', function () {
 
 	});
 
+    describe('findByUsername method', function () {
+
+		before(function (done) {
+			
+			sequelize = require("../../app/model");
+
+			//connect to in-memory database
+			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			
+			//create table
+			userRepository.sync({force: true}).success(function(){
+				
+				done();	
+
+			}).error(function(error) {
+				throw error;
+			});
+		});
+
+		it('should find a user', function (done) {
+	
+			var totalRegisters = 2;
+
+			var username = 'prueba1';
+
+			//this is the callback function that gets exectuted after creating example data in db
+			var findByUsername = function() {
+				
+				var success = function(result) {
+
+					result.username.should.equal(username);
+
+					//here the test ends
+					done();
+				}
+
+				var error = function(err) {
+					throw err;
+				}
+
+				userRepository.findByUsername(username, success, error);
+			};
+
+			//first create some example users
+			createUsers(totalRegisters, findByUsername);
+		});
+	});
+
 	describe('findById method', function () {
 
 		before(function (done) {
