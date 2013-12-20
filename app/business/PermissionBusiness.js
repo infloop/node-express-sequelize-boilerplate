@@ -30,7 +30,7 @@ module.exports.getAllPermissions = function(req, res) {
 }
 
 /*
- * Creates a new role
+ * Creates a new permission
  */
 module.exports.createPermission = function(req, res) {
 

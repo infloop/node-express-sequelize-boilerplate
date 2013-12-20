@@ -199,8 +199,8 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
         if (roleResult) {
 
-            var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
-            permissionRepository.findPermissionsByRole(roleResult, permissionSuccess, permissionError);
+            var roleRepository = repositoryFactory.getRoleRepository(req.app);
+            roleRepository.getRolePermissions(roleResult.name, permissionSuccess, permissionError);
 
         } else {
 

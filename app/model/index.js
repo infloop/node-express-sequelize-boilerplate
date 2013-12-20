@@ -51,6 +51,7 @@ models.forEach(function(model) {
 
   m.User.belongsTo(m.Role);
   m.Role.hasMany(m.Permission);
+  m.Permission.hasMany(m.Role);
   m.UserToken.belongsTo(m.User);
 
 })(module.exports);
