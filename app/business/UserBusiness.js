@@ -72,10 +72,12 @@ module.exports.doLogout = function(req, res){
 
     var successFind = function(token){
         
-        var type = authorization.getTokenType(req);
+        if(token){
+            var type = authorization.getTokenType(req);
 
-        //then delete all tokens of the same type for the current user
-        userTokenRepository.deleteAllTokensSameType(token.userId, type);
+            //then delete all tokens of the same type for the current user
+            userTokenRepository.deleteAllTokensSameType(token.userId, type);
+        }
     }
 
     var errorFind = function(error){
