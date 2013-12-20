@@ -11,17 +11,17 @@ module.exports = function(userModel) {
 		userModel.findAll({offset: options.offset, limit: options.limit}).success(success).error(error);
 	}
 
-	userModel.findByUsername = function(username, success, error){
-		userModel.find({where: {username: username}}).success(success).error(error);
+	userModel.findById = function(id, success, error){
+		userModel.find({where: {id: id}}).success(success).error(error);
 	}
 
-    userModel.updateByUsername = function(username, user, success, error) {
+    userModel.updateById = function(id, updatedUser, success, error) {
     	// update(updated entity, where clause)
-        userModel.update(user, {username: username}).success(success).error(error);
+        userModel.update(updatedUser, {id: id}).success(success).error(error);
 	}
 
-    userModel.deleteByUsername = function(username, success, error) {
-        userModel.destroy({username: username}).success(success).error(error);
+    userModel.deleteById = function(id, success, error) {
+        userModel.destroy({id: id}).success(success).error(error);
     }
 
 	return userModel;

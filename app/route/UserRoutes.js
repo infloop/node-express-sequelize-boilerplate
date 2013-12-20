@@ -20,11 +20,11 @@ module.exports = function (app, passport) {
 	app.post(routes.users, userBusiness.create);
 
     // Get a specific user.
-    app.get(routes.specificUSer, userBusiness.getUserByUsername);
+    app.get(routes.specificUSer, userBusiness.getUserById);
 
     // Update the information of a given user.
-    app.put(routes.specificUSer, userBusiness.updateUserByUsername);
+    app.put(routes.specificUSer, userBusiness.updateUserById);
 
     // Delete a specific user.
-    app.delete(routes.specificUSer, userBusiness.deleteUserByUsername);
+    app.delete(routes.specificUSer, userBusiness.deleteUserById);
 };

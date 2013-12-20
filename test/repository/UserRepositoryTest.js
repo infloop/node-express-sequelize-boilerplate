@@ -85,7 +85,7 @@ describe('UserRepository', function () {
 
 	});
 
-	describe('findByUsername method', function () {
+	describe('findById method', function () {
 
 		before(function (done) {
 			
@@ -108,14 +108,14 @@ describe('UserRepository', function () {
 	
 			var totalRegisters = 2;
 
-			var username = "prueba1";
+			var id = 1;
 
 			//this is the callback function that gets exectuted after creating example data in db
-			var findByUsername = function() {
+			var findById = function() {
 				
 				var success = function(result) {
 
-					result.username.should.equal(username);
+					result.username.should.equal('prueba0');
 
 					//here the test ends
 					done();
@@ -125,15 +125,15 @@ describe('UserRepository', function () {
 					throw err;
 				}
 
-				userRepository.findByUsername(username, success, error);
+				userRepository.findById(id, success, error);
 			};
 
 			//first create some example users
-			createUsers(totalRegisters, findByUsername);
+			createUsers(totalRegisters, findById);
 		});
 	});
 
-    describe('updateByUsername method', function () {
+    describe('updateById method', function () {
 
 		before(function (done) {
 			
@@ -167,33 +167,36 @@ describe('UserRepository', function () {
                     };
 
                     var findError = function(error) {
+                        logger.warn("************** 1");
                         throw error;
                     };
 
-                    userRepository.findByUsername(username, findSuccess, findError);
+                    userRepository.findById(id, findSuccess, findError);
                 };
 
                 var error = function(error) {
+                    logger.warn("************** 2");
+                    logger.warn(error);
                     throw error;
                 };
 
                 userRepository = require("../../app/repository/UserRepository")(sequelize.User);
-                var username = 'prueba2';
+                var id = 2;
 
                 var updatedUser = {
-                    'username' : 'prueba2',
+                    'username' : 'prueba12',
                     'password' : 'pwd',
-                    'email' : 'qwe@domain.com'
+                    'email' : 'prueba123@domain.com'
                 };
                 
-                userRepository.updateByUsername(username, updatedUser, success, error);
+                userRepository.updateById(id, updatedUser, success, error);
             };
 
             createUsers(numeroUsuarios, verifyUserWasUpdated);
         });
     });
 
-    describe('deleteByUsername method', function () {
+    describe('deleteById method', function () {
 
 		before(function (done) {
 			
@@ -231,8 +234,8 @@ describe('UserRepository', function () {
                 };
 
                 userRepository = require("../../app/repository/UserRepository")(sequelize.User);
-                var username = 'prueba2';
-                userRepository.deleteByUsername(username, success, error);
+                var id = 2;
+                userRepository.deleteById(id, success, error);
             };
 
             createUsers(numeroUsuarios, verifyUserWasDeleted);
