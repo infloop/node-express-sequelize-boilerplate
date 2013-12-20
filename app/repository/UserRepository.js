@@ -11,6 +11,10 @@ module.exports = function(userModel) {
 		userModel.findAll({offset: options.offset, limit: options.limit}).success(success).error(error);
 	}
 
+    userModel.findByUsername = function(username, success, error){
+		userModel.find({where: {username: username}}).success(success).error(error);
+	}
+
 	userModel.findById = function(id, success, error){
 		userModel.find({where: {id: id}}).success(success).error(error);
 	}
