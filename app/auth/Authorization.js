@@ -133,12 +133,19 @@ exports.requiresLogin = function(req, res, next) {
 
 function isAuthorized(permissionList, httpVerb, uri) {
 
+    // First translate the values to lowercase.
+    httpVerb = httpVerb.toLowerCase();
+    uri = uri.toLowerCase();
+
     var found = false;
 
     for (var i = 0; (i < permissionList.length) && (!found); i++) {
 
         var permission = permissionList[i];
-        if ((permission.httpVerb == httpVerb) && (permission.uri == uri)) {
+
+        // Translate the object values to lowercase.
+
+        if ((permission.httpVerb.toLowerCase() == httpVerb) && (permission.uri.toLowerCase() == uri)) {
             found = true;
         }
     }
@@ -150,12 +157,16 @@ function isAuthorized(permissionList, httpVerb, uri) {
 
 function isRequestingAPublicResource(publicResourceList, httpVerb, uri) {
 
+    // First translate the values to lowercase.
+    httpVerb = httpVerb.toLowerCase();
+    uri = uri.toLowerCase();
+
     var found = false;
 
     for (var i = 0; (i < publicResourceList.length) && (!found); i++) {
 
         var publicResource = publicResourceList[i];
-        if ((publicResource.httpVerb == httpVerb) && (publicResource.uri == uri)) {
+        if ((publicResource.httpVerb.toLowerCase() == httpVerb) && (publicResource.uri.toLowerCase() == uri)) {
             found = true;
         }
     }
@@ -208,8 +219,8 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
         if (roleResult) {
 
-            var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
-            permissionRepository.findPermissionsByRole(roleResult, permissionSuccess, permissionError);
+            var roleRepository = repositoryFactory.getRoleRepository(req.app);
+            roleRepository.getRolePermissions(roleResult.name, permissionSuccess, permissionError);
 
         } else {
 

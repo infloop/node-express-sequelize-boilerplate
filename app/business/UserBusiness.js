@@ -138,7 +138,7 @@ module.exports.getUserRoleByToken = function(req, res) {
     sequelizeRepository.findRoleByToken(tokenSuccess, tokenError);
 }
 
-module.exports.getUserByUsername = function(req, res) {
+module.exports.getUserById = function(req, res) {
 
     var success = function(user) {
         res.status(200).json(user);
@@ -149,10 +149,10 @@ module.exports.getUserByUsername = function(req, res) {
     };
 
     var userRepository = repositoryFactory.getUserRepository(req.app);
-    userRepository.findByUsername(req.params.username, success, error);
+    userRepository.findById(req.params.id, success, error);
 }
 
-module.exports.updateUserByUsername = function(req, res) {
+module.exports.updateUserById = function(req, res) {
 
     var success = function(user) {
         res.status(200).json(user);
@@ -163,10 +163,10 @@ module.exports.updateUserByUsername = function(req, res) {
     };
 
     var userRepository = repositoryFactory.getUserRepository(req.app);
-    userRepository.updateByUsername(req.params.username, req.body, success, error);
+    userRepository.updateById(req.params.id, req.body, success, error);
 }
 
-module.exports.deleteUserByUsername = function(req, res) {
+module.exports.deleteUserById = function(req, res) {
 
     var success = function(user) {
         res.status(200).json(user);
@@ -177,5 +177,5 @@ module.exports.deleteUserByUsername = function(req, res) {
     };
 
     var userRepository = repositoryFactory.getUserRepository(req.app);
-    userRepository.deleteByUsername(req.params.username, success, error);
+    userRepository.deleteById(req.params.id, success, error);
 }
