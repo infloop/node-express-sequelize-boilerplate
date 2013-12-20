@@ -13,7 +13,7 @@ module.exports.getRoutes = function() {
 
         // Users
         users: "/api/users",
-        specificUSer: "/api/users/:username",
+        specificUSer: "/api/users/:id",
 
         // Roles
         roles: "/api/roles",

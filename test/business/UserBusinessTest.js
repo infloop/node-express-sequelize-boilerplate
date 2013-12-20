@@ -131,7 +131,7 @@ describe('UserBusiness', function () {
         });
     });
 
-    describe('getUserByUsername method', function () {
+    describe('getUserById method', function () {
 
         it('should return 200 OK', function (done) {
 
@@ -148,7 +148,7 @@ describe('UserBusiness', function () {
             var request = {
 
                 params: {
-                    'username' : 'qwe'
+                    'id' : '123'
                 }
             };
 
@@ -174,7 +174,7 @@ describe('UserBusiness', function () {
                     getUserRepository: function(req) {
                         return {
 
-                            findByUsername: function(username, success, error) {
+                            findById: function(username, success, error) {
                                 success(expectedResult);
                             }
                         }
@@ -185,10 +185,10 @@ describe('UserBusiness', function () {
             //set up mocks
             mocks();
 
-            userBusiness.getUserByUsername(request, response);
+            userBusiness.getUserById(request, response);
         });
 
-        it('should return 500 because the user with the given username does not exist', function (done) {
+        it('should return 500 because the user with the given user id does not exist', function (done) {
 
             //attention: it's rewire not require :)
             var userBusiness = rewire("../../app/business/UserBusiness");
@@ -202,7 +202,7 @@ describe('UserBusiness', function () {
             var request = {
 
                 params: {
-                    'username' : 'qwe'
+                    'id' : '123'
                 }
             };
 
@@ -228,7 +228,7 @@ describe('UserBusiness', function () {
                     getUserRepository: function(req) {
                         return {
 
-                            findByUsername: function(username, success, error) {
+                            findById: function(username, success, error) {
                                 error(expectedResult);
                             }
                         }
@@ -239,11 +239,11 @@ describe('UserBusiness', function () {
             //set up mocks
             mocks();
 
-            userBusiness.getUserByUsername(request, response);
+            userBusiness.getUserById(request, response);
         });
     });
 
-    describe('updateByUsername method', function () {
+    describe('updateById method', function () {
 
         it('should return 200 OK', function (done) {
 
@@ -261,7 +261,7 @@ describe('UserBusiness', function () {
             var request = {
 
                 params: {
-                    'username' : 'qwe'
+                    'id' : '123'
                 },
 
                 body: {
@@ -292,7 +292,7 @@ describe('UserBusiness', function () {
                 userBusiness.__set__("repositoryFactory", {
                     getUserRepository: function(req) {
                         return {
-                            updateByUsername: function(username, user, success, error) {
+                            updateById: function(username, user, success, error) {
                                 success(expectedResult);
                             }
                         }
@@ -303,11 +303,11 @@ describe('UserBusiness', function () {
             //set up mocks
             mocks();
 
-            userBusiness.updateUserByUsername(request, response);
+            userBusiness.updateUserById(request, response);
         });
     });
 
-    describe('deleteUserByUsername method', function () {
+    describe('deleteUserById method', function () {
 
         it('should return 200 OK', function (done) {
 
@@ -324,7 +324,7 @@ describe('UserBusiness', function () {
             var request = {
 
                 params: {
-                    'username' : 'qwe'
+                    'id' : '123'
                 }
             };
 
@@ -349,7 +349,7 @@ describe('UserBusiness', function () {
                 userBusiness.__set__("repositoryFactory", {
                     getUserRepository: function(req) {
                         return {
-                            deleteByUsername: function(username, success, error) {
+                            deleteById: function(username, success, error) {
                                 success(expectedResult);
                             }
                         }
@@ -360,7 +360,7 @@ describe('UserBusiness', function () {
             //set up mocks
             mocks();
 
-            userBusiness.deleteUserByUsername(request, response);
+            userBusiness.deleteUserById(request, response);
         });
     });
 });
