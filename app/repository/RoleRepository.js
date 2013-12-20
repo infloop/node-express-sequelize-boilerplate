@@ -29,5 +29,19 @@ module.exports = function(roleModel) {
         roleModel.destroy({ name: roleName }).success(success).error(error);
     }
 
+    roleModel.getRolePermissions = function(roleName, success, error) {
+
+        var getRoleSuccess = function(role) {
+
+            if (role) {
+                role.getPermissions().success(success).error(error);
+            } else {
+                error("No hay un role con el nombre: " + roleName);
+            }
+        };
+
+        roleModel.getRoleByName(roleName, getRoleSuccess, error)
+    }
+
 	return roleModel;
 };

@@ -14,7 +14,7 @@ module.exports = function(permissionModel) {
     /**
      * Update a permission given its name.
      */
-    permissionModel.getPermissionByName = function(permissionName, updatedPermission, success, error) {
+    permissionModel.getPermissionByName = function(permissionName, success, error) {
         // update(updated entity, where clause)
         permissionModel.find({ where: { name: permissionName } }).success(success).error(error);
     }
@@ -31,15 +31,24 @@ module.exports = function(permissionModel) {
      * Delete a permission given its name.
      */
     permissionModel.deletePermissionByName = function(permissionName, success, error) {
-        // update(updated entity, where clause)
-        permissionModel.delete({ name: permissionName }).success(success).error(error);
+        permissionModel.destroy({ name: permissionName }).success(success).error(error);
     }
 
     /**
      * Gets the permissions of the given role.
      */
-    permissionModel.findPermissionsByRole = function(role, success, error) {
-        permissionModel.findAll({ where: { roleId: role.id } }).success(success).error(error);
+    permissionModel.findRolesWhereTheGivenPermissionIsRegistered = function(permissionName, success, error) {
+
+        var getSuccess = function(permission) {
+
+            if (permission) {
+                permission.getRoles().success(success).error(error);
+            } else {
+                error("No hay un permiso con el nombre: " + permissionName);
+            }
+        };
+
+        permissionModel.getPermissionByName(permissionName, getSuccess, error);
     }
 
 	return permissionModel;
