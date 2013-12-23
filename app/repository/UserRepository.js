@@ -8,7 +8,7 @@ module.exports = function(userModel) {
 	 * finds all results of the user table according to the params offset and limit
 	 */
 	userModel.getAllUsers = function(options, success, error){
-		userModel.findAll({offset: options.offset, limit: options.limit}).success(success).error(error);
+		userModel.findAndCountAll({offset: options.offset, limit: options.limit}).success(success).error(error);
 	}
 
     userModel.findByUsername = function(username, success, error){

@@ -13,7 +13,6 @@ module.exports.getPermissionsByToken = function(req, res){
     var token = authorization.getTokenFromRequest(req);
 
     var success = function(permissions){
-        logger.debug("!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!!");
         logger.debug(permissions);
         res.json(permissionResource.buildList(permissions));
     }

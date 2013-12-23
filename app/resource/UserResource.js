@@ -29,12 +29,22 @@ module.exports.buildList = function(userModel){
 
 	var array = [];
 
-	for(var i = 0; i < userModel.length; i++) {
+	var rows = userModel.rows;
 
-		var builtUser = module.exports.build(userModel[i]);
+	for(var i = 0; i < rows.length; i++) {
+
+		var builtUser = module.exports.build(rows[i]);
 		array.push(builtUser);
 	}
 
-	return array;
+	return {
+		"users": array,
+		"pagination": {
+			"offset": userModel.offset,
+			"page": Math.ceil(userModel.offset/userModel.limit),
+			"limit": userModel.limit,
+			"count": userModel.count
+		}
+	};
 
 }

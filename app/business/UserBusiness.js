@@ -16,16 +16,19 @@ module.exports.all = function(req, res){
 
     var userRepository = repositoryFactory.getUserRepository(req.app);
 
+    var offset = (req.param('offset') > 0 ? req.param('offset') : 1) - 1;
+    var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
+
     var success = function(result) {
+        result.offset = offset;
+        result.limit = limit;
         res.status(200).json(userResource.buildList(result));
     }
 
     var error = function(err) {
         res.status(500).json(err);
     }
-
-    var offset = (req.param('offset') > 0 ? req.param('offset') : 1) - 1;
-    var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
+    
 
     var options = {
         offset: offset,
