@@ -35,6 +35,16 @@ module.exports.all = function(req, res){
         limit: limit
     }
 
+    var username = req.param("username");
+    if(username){
+        options.username = username;
+    }
+
+    var email = req.param("email");
+    if(email){
+        options.email = email;
+    }
+
     userRepository.getAllUsers(options, success, error);
 }
 
