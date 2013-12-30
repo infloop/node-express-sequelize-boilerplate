@@ -16,6 +16,7 @@ var logger = require("../../config/logger");
 module.exports.build = function(userModel, additional){
 
 	var result = {
+		id: userModel.id,
 		username: userModel.username,
 		email: userModel.email,
 		createdAt: userModel.createdAt,
