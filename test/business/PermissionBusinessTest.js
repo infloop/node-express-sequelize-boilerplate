@@ -158,7 +158,7 @@ describe('PermissionBusiness', function () {
 
                 //mock getRepository function (i.e. the repository). This way, we do not need the database connection
                 permissionBusiness.__set__("repositoryFactory", {
-                    getPermissionRepository: function(req) {
+                    getPermissionRepository: function() {
                         return {
                             getPermissionByName: function(permissionName, success, error) {
                                 success(expectedResult);

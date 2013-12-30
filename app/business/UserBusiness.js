@@ -1,6 +1,6 @@
 var logger = require("../../config/logger");
 var constants = require("../../config/constants");
-var repositoryFactory = require("../repository/RepositoryFactory");
+var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
 var authorization = require("../auth/Authorization");
 // Load configurations according to the selected environment
 var env = process.env.NODE_ENV || 'development';
@@ -14,7 +14,7 @@ var permissionResource = require("../resource/PermissionResource");
  */
 module.exports.all = function(req, res){
 
-    var userRepository = repositoryFactory.getUserRepository(req.app);
+    var userRepository = repositoryFactory.getUserRepository();
 
     var success = function(result) {
         res.status(200).json(userResource.buildList(result));
@@ -43,7 +43,7 @@ module.exports.doLogin = function(req, res) {
 
     logger.debug("Inicio - doLogin "+req.user.username);
 
-    var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
+    var userTokenRepository = repositoryFactory.getUserTokenRepository();
 
     var success = function(token){
         if(token){
@@ -78,7 +78,7 @@ module.exports.doLogout = function(req, res){
  */
 module.exports.create = function(req, res){
 
-    var userRepository = repositoryFactory.getUserRepository(req.app);
+    var userRepository = repositoryFactory.getUserRepository();
 
     var success = function(user){
         res.status(201).json(user);
@@ -119,7 +119,7 @@ module.exports.getUserRoleByToken = function(req, res) {
         logger.debug("*************** error: " + error);
     };
 
-    var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
+    var sequelizeRepository = repositoryFactory.getSequelizeRepository();
     sequelizeRepository.findRoleByToken(tokenSuccess, tokenError);
 }
 
@@ -133,7 +133,7 @@ module.exports.getUserById = function(req, res) {
         res.status(500).json(error);
     };
 
-    var userRepository = repositoryFactory.getUserRepository(req.app);
+    var userRepository = repositoryFactory.getUserRepository();
     userRepository.findById(req.params.id, success, error);
 }
 
@@ -147,7 +147,7 @@ module.exports.updateUserById = function(req, res) {
         res.status(500).json(error);
     };
 
-    var userRepository = repositoryFactory.getUserRepository(req.app);
+    var userRepository = repositoryFactory.getUserRepository();
     userRepository.updateById(req.params.id, req.body, success, error);
 }
 
@@ -161,6 +161,6 @@ module.exports.deleteUserById = function(req, res) {
         res.status(500).json(error);
     };
 
-    var userRepository = repositoryFactory.getUserRepository(req.app);
+    var userRepository = repositoryFactory.getUserRepository();
     userRepository.deleteById(req.params.id, success, error);
 }

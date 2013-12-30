@@ -12,6 +12,7 @@ var app = express();
 
 // bootstrap database connection and save it in express context
 app.set("models", require("./app/model"));
+var repositoryFactory = require("./app/repository/RepositoryFactory").init(app);
 
 //set some global constants
 app.set("constants", require("./config/constants"));
@@ -28,4 +29,4 @@ require('./app/route')(app, passport);
 //start app on mentioned port
 app.listen(config.app.port);
 
-logger.info('listening on port '+ config.app.port);
+logger.info('listening on port ' + config.app.port);
