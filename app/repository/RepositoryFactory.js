@@ -1,34 +1,36 @@
 var logger = require("../../config/logger");
 
-module.exports.getSequelizeRepository = function(app) {
+var appReference = null;
 
-    return require("../repository/SequelizeRepository")(app.get("models").sequelize);
-}
+module.exports.init = function(app) {
 
-/**
- * This method returns the user repository
- */
-module.exports.getUserRepository = function(app){
-	return require("../repository/UserRepository")(app.get("models").User);
+    appReference = app;
 };
 
-/**
- * This method returns the role repository
- */
-module.exports.getRoleRepository = function(app){
-	return require("../repository/RoleRepository")(app.get("models").Role);
-};
+module.exports.getRepositoryFactory = function() {
 
-/**
- * This method returns the permission repository
- */
-module.exports.getPermissionRepository = function(app){
-	return require("../repository/PermissionRepository")(app.get("models").Permission);
-};
+    var repositoryFactory = {
 
-/**
- * This method returns the userToken repository
- */
-module.exports.getUserTokenRepository = function(app){
-	return require("../repository/UserTokenRepository")(app.get("models").UserToken);
+        getSequelizeRepository: function() {
+            return require("../repository/SequelizeRepository")(appReference.get("models").sequelize);
+        },
+
+        getUserRepository: function() {
+            return require("../repository/UserRepository")(appReference.get("models").User);
+        },
+
+        getRoleRepository: function() {
+            return require("../repository/RoleRepository")(appReference.get("models").Role);
+        },
+
+        getPermissionRepository: function() {
+            return require("../repository/PermissionRepository")(appReference.get("models").Permission);
+        },
+
+        getUserTokenRepository: function() {
+            return require("../repository/UserTokenRepository")(appReference.get("models").UserToken);
+        }
+    };
+
+    return repositoryFactory;
 };

@@ -1,13 +1,13 @@
 var logger = require("../../config/logger");
 var constants = require("../../config/constants");
-var repositoryFactory = require("../repository/RepositoryFactory");
+var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
 
 /**
  * This method returns (in the response) all roles
  */
 module.exports.getAllPermissions = function(req, res) {
 
-    var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
+    var permissionRepository = repositoryFactory.getPermissionRepository();
 
     var success = function(permissions) {
         res.status(200).json(permissions);
@@ -34,7 +34,7 @@ module.exports.getAllPermissions = function(req, res) {
  */
 module.exports.createPermission = function(req, res) {
 
-    var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
+    var permissionRepository = repositoryFactory.getPermissionRepository();
 
     var success = function(permission) {
 
@@ -63,7 +63,7 @@ module.exports.getPermissionByName = function(req, res) {
         res.status(500).json(error);
     };
 
-    var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
+    var permissionRepository = repositoryFactory.getPermissionRepository();
     permissionRepository.getPermissionByName(req.params.permissionName, success, error);
 }
 
@@ -77,7 +77,7 @@ module.exports.updatePermissionByName = function(req, res) {
         res.status(500).json(error);
     };
 
-    var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
+    var permissionRepository = repositoryFactory.getPermissionRepository();
     permissionRepository.updatePermissionByName(req.params.permissionName, req.body, success, error);
 }
 
@@ -91,6 +91,6 @@ module.exports.deletePermissionByName = function(req, res) {
         res.status(500).json(error);
     };
 
-    var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
+    var permissionRepository = repositoryFactory.getPermissionRepository();
     permissionRepository.deletePermissionByName(req.params.permissionName, success, error);
 }
