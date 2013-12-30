@@ -1,13 +1,13 @@
 var logger = require("../../config/logger");
 var constants = require("../../config/constants");
-var repositoryFactory = require("../repository/RepositoryFactory");
+var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
 
 /**
  * This method returns (in the response) all roles
  */
 module.exports.all = function(req, res) {
 
-    var roleRepository = repositoryFactory.getRoleRepository(req.app);
+    var roleRepository = repositoryFactory.getRoleRepository();
 
     var success = function(roles){
         res.status(200).json(roles);
@@ -34,7 +34,7 @@ module.exports.all = function(req, res) {
  */
 module.exports.create = function(req, res) {
 
-    var roleRepository = repositoryFactory.getRoleRepository(req.app);
+    var roleRepository = repositoryFactory.getRoleRepository();
 
     var success = function(role) {
 
@@ -63,7 +63,7 @@ module.exports.updateRoleByName = function(req, res) {
         res.status(500).json(error);
     };
 
-    var roleRepository = repositoryFactory.getRoleRepository(req.app);
+    var roleRepository = repositoryFactory.getRoleRepository();
     roleRepository.updateRoleByName(req.params.rolename, req.body, success, error);
 }
 
@@ -77,81 +77,48 @@ module.exports.deleteRoleByName = function(req, res) {
         res.status(500).json(error);
     };
 
-    var roleRepository = repositoryFactory.getRoleRepository(req.app);
+    var roleRepository = repositoryFactory.getRoleRepository();
     roleRepository.deleteRoleByName(req.params.rolename, success, error);
-}
+};
 
 module.exports.getRolePermissions = function(req, res) {
 
-    var roleSuccess = function(role) {
+    var success = function(success) {
+        res.status(200).json(success);
+    };
 
-        var success = function(permissionList) {
-
-            if (permissionList) {
-
-                res.status(200).json(permissionList);
-
-            } else {
-
-                // returns an empty list.
-                var emptyList = new Array();
-                res.status(200).json(emptyList);
-            }
-        };
-
-        var error = function(error) {
-
-            res.status(500).json(error);
-        };
-
-        var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
-        permissionRepository.findPermissionsByRole(role, success, error);
-    }
-
-    var roleError = function(error) {
-
+    var error = function(error) {
         res.status(500).json(error);
-    }
+    };
 
-    var roleRepository = repositoryFactory.getRoleRepository(req.app);
-    roleRepository.getRoleByName(req.params.rolename, roleSuccess, roleError);
-}
+    var roleRepository = repositoryFactory.getRoleRepository();
+    roleRepository.getRolePermissions(req.params.role, success, error);
+};
 
 module.exports.addPermissionToRole = function(req, res) {
 
-    var roleSuccess = function(role) {
-
-        if (role) {
-
-            var saveSuccess = function(permission) {
-
-                role.addPermission(permission).success(function() {
-
-                    res.status(200).json("");
-                });
-            };
-
-            var saveError = function(error) {
-
-                res.status(500).json(error);
-            };
-
-            // Saves the permission to the role.
-            var permissionRepository = repositoryFactory.getPermissionRepository(req.app);
-            var permissionEntry =  permissionRepository.build(req.body);
-            permissionEntry.save().success(saveSuccess).error(saveError);
-
-        } else {
-
-            roleError(error);
-        }
+    var success = function(success) {
+        res.status(201).json(success);
     };
 
-    var roleError = function(error) {
-
+    var error = function(error) {
         res.status(500).json(error);
     };
 
-    var roleRepository = repositoryFactory.getRoleRepository(req.app);
-    roleRepository.getRoleByName(req.params.role, roleSuccess, roleError);
-}
+    var roleRepository = repositoryFactory.getRoleRepository();
+    roleRepository.addPermissionToRole(req.params.role, req.body, success, error);
+};
+
+module.exports.setMultiplePermissionsToRole = function(req, res) {
+
+    var success = function(success) {
+        res.status(201).json(success);
+    };
+
+    var error = function(error) {
+        res.status(500).json(error);
+    };
+
+    var roleRepository = repositoryFactory.getRoleRepository();
+    roleRepository.setMultiplePermissionsToRole(req.params.role, req.body, success, error);
+};

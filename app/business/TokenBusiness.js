@@ -1,6 +1,6 @@
 var logger = require("../../config/logger");
 var constants = require("../../config/constants");
-var repositoryFactory = require("../repository/RepositoryFactory");
+var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
 var authorization = require("../auth/Authorization");
 // Load configurations according to the selected environment
 var env = process.env.NODE_ENV || 'development';
@@ -21,6 +21,6 @@ module.exports.getPermissionsByToken = function(req, res){
         res.status(500).json(error);
     }
 
-    var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
+    var sequelizeRepository = repositoryFactory.getSequelizeRepository();
     sequelizeRepository.findPermissionsByToken(token, success, error);   
 }

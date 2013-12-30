@@ -51,7 +51,7 @@ describe('RoleBusiness', function () {
 
                 //mock getRepository function (i.e. the repository). This way, we do not need the database connection
                 roleBusiness.__set__("repositoryFactory", {
-                    getRoleRepository: function(req) {
+                    getRoleRepository: function() {
                         return {
                             getAllRoles: function(options, success, error) {
                                 success(expectedResult);
@@ -299,7 +299,7 @@ describe('RoleBusiness', function () {
 
         it('should return 200 OK', function (done) {
 
-             var roleBusiness = rewire("../../app/business/RoleBusiness");
+            var roleBusiness = rewire("../../app/business/RoleBusiness");
 
             var request = {
 
@@ -396,7 +396,6 @@ describe('RoleBusiness', function () {
             var mocks = function() {
 
                 roleBusiness.__set__("repositoryFactory", {
-
                     getRoleRepository: function() {
                         return {
                             deleteRoleByName: function(req, success, error) {
@@ -462,26 +461,12 @@ describe('RoleBusiness', function () {
 
                 roleBusiness.__set__("repositoryFactory", {
 
-                    getRoleRepository: function(req) {
-                        return roleRepository;
-                    },
-
-                    getPermissionRepository: function(req) {
-                        return permissionRepository;
-                    }
-                });
-
-                roleBusiness.__set__("roleRepository", {
-
-                    getRoleByName: function(rolename, success, error) {
-                        success(success);
-                    }
-                });
-
-                roleBusiness.__set__("permissionRepository", {
-
-                    findPermissionsByRole: function(role, success, error) {
-                        success(expectedResult);
+                    getRoleRepository: function() {
+                        return {
+                            getRolePermissions: function(roleName, success, error) {
+                                success(expectedResult);
+                            }
+                        }
                     }
                 });
             };
@@ -490,6 +475,160 @@ describe('RoleBusiness', function () {
             mocks();
 
             roleBusiness.getRolePermissions(request, response);
+        });
+    });
+
+    describe('addPermissionToRole method', function() {
+
+        it('should return 200', function(done) {
+
+            var roleBusiness = rewire("../../app/business/RoleBusiness");
+
+            var rolename = 'admin';
+
+            var request = {
+
+                params: {
+
+                    'rolename': rolename
+                },
+
+                body: {
+
+                    'name' : 'create user',
+                    'httpVerb' : 'post',
+                    'uri' : '/api/users'
+                }
+            };
+
+            var expectedStatus = 201;
+
+            var expectedResult = "{}";
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+                json: function(result) {
+
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            // Verify the request contains the expected params.
+            var params = request.params;
+            params.should.not.be.empty;
+            params.should.have.keys('rolename');
+            params.rolename.should.include('admin');
+
+            request.body.should.not.be.empty;
+
+            /**
+             * Mock all the methods and properties needed to the element we try to test
+             */
+            var mocks = function() {
+
+                roleBusiness.__set__("repositoryFactory", {
+
+                    getRoleRepository: function() {
+
+                        return {
+                            addPermissionToRole: function(roleName, jsonPermission, success, error) {
+                                success(expectedResult);
+                            }
+                        }
+                    }
+                });
+            };
+
+            //set up mocks
+            mocks();
+
+            roleBusiness.addPermissionToRole(request, response);
+        });
+    });
+
+    describe('setMultiplePermissionsToRole method', function() {
+
+        it('should return 200', function(done) {
+
+            var roleBusiness = rewire("../../app/business/RoleBusiness");
+
+            var rolename = 'admin';
+
+            var request = {
+
+                params: {
+
+                    'rolename': rolename
+                },
+
+                body: [
+
+                {
+                    'name' : 'create user',
+                    'httpVerb' : 'post',
+                    'uri' : '/api/users'
+                },
+
+                {
+                    'name' : 'create role',
+                    'httpVerb' : 'post',
+                    'uri' : '/api/roles'
+                }
+                ]
+            };
+
+            var expectedStatus = 201;
+
+            var expectedResult = "[]";
+
+            var response = {
+
+                status: function(status) {
+                    status.should.equal(expectedStatus);
+                    return this;
+                },
+                json: function(result) {
+
+                    result.should.equal(expectedResult);
+                    done();
+                }
+            };
+
+            // Verify the request contains the expected params.
+            var params = request.params;
+            params.should.not.be.empty;
+            params.should.have.keys('rolename');
+            params.rolename.should.include('admin');
+
+            request.body.should.not.be.empty;
+
+            /**
+             * Mock all the methods and properties needed to the element we try to test
+             */
+            var mocks = function() {
+
+                roleBusiness.__set__("repositoryFactory", {
+
+                    getRoleRepository: function() {
+
+                        return {
+                            setMultiplePermissionsToRole: function(roleName, jsonPermissionArray, success, error) {
+                                success(expectedResult);
+                            }
+                        }
+                    }
+                });
+            };
+
+            //set up mocks
+            mocks();
+
+            roleBusiness.setMultiplePermissionsToRole(request, response);
         });
     });
 });
