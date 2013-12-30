@@ -108,11 +108,12 @@ module.exports.create = function(req, res){
 
     var userRepository = repositoryFactory.getUserRepository();
 
-    var success = function(user){
-        res.status(201).json(user);
+    var success = function(user) {
+
+        res.status(201).json(userResource.build(user));
     }
 
-    var error = function(error){
+    var error = function(error) {
         logger.error(error);
         res.status(500).json(error);
     }
@@ -154,7 +155,7 @@ module.exports.getUserRoleByToken = function(req, res) {
 module.exports.getUserById = function(req, res) {
 
     var success = function(user) {
-        res.status(200).json(user);
+        res.status(200).json(userResource.build(user));
     };
 
     var error = function(error) {
@@ -168,7 +169,7 @@ module.exports.getUserById = function(req, res) {
 module.exports.updateUserById = function(req, res) {
 
     var success = function(user) {
-        res.status(200).json(user);
+        res.status(200).json(userResource.build(user));
     };
 
     var error = function(error) {
@@ -182,7 +183,7 @@ module.exports.updateUserById = function(req, res) {
 module.exports.deleteUserById = function(req, res) {
 
     var success = function(user) {
-        res.status(200).json(user);
+        res.status(200).json(userResource.build(user));
     };
 
     var error = function(error) {
