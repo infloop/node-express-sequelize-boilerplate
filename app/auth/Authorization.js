@@ -1,5 +1,5 @@
 var logger = require("../../config/logger");
-var repositoryFactory = require("../repository/RepositoryFactory");
+var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
 var constants = require("../../config/constants");
 var routesConstants = require("../../config/routesConstants");
 // Load configurations according to the selected environment
@@ -147,10 +147,9 @@ function isAuthorized(permissionList, httpVerb, uri) {
         var permissionRoute = new express.Route('', permission.uri.toLowerCase());
         var matched = permissionRoute.match(uri);
 
-        logger.info("Matching: "+permission.uri.toLowerCase()+" with "+uri+"  ::::::"+matched);
-
         // Translate the object values to lowercase.
         if ((permission.httpVerb.toLowerCase() == httpVerb) && (matched)) {
+            logger.info("Matching: "+permission.uri.toLowerCase()+" with "+uri+"  ::::::"+matched);
             found = true;
         }
     }
