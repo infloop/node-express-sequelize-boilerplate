@@ -5,6 +5,7 @@ var routesConstants = require("../../config/routesConstants");
 // Load configurations according to the selected environment
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
+var express = require("express");
 
 var that = this;
 
@@ -86,6 +87,15 @@ var getTokenFromRequest2 = function(req){
 exports.getTokenFromRequest = function(req) {
     return getTokenFromRequest2(req);
 }
+
+exports.getTokenType = function(req){
+    var type = constants.client.web;
+    if(req.body && req.body.type){
+        type = constants.client.mobile;
+    }
+
+    return type;
+}
     
 
 /*
@@ -134,9 +144,13 @@ function isAuthorized(permissionList, httpVerb, uri) {
 
         var permission = permissionList[i];
 
-        // Translate the object values to lowercase.
+        var permissionRoute = new express.Route('', permission.uri.toLowerCase());
+        var matched = permissionRoute.match(uri);
 
-        if ((permission.httpVerb.toLowerCase() == httpVerb) && (permission.uri.toLowerCase() == uri)) {
+        logger.info("Matching: "+permission.uri.toLowerCase()+" with "+uri+"  ::::::"+matched);
+
+        // Translate the object values to lowercase.
+        if ((permission.httpVerb.toLowerCase() == httpVerb) && (matched)) {
             found = true;
         }
     }
@@ -228,7 +242,7 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
     
     var publicResourceList = routesConstants.getPublicRoutes();
 
-    if (isRequestingAPublicResource(publicResourceList, httpVerb, uri)) {
+    if (isRequestingAPublicResource(publicResourceList, httpVerb, uri, req.app)) {
 
         // If the requested resource is public then it allows the user to access it.
         return next();

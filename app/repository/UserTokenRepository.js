@@ -63,7 +63,20 @@ module.exports = function(userTokenModel) {
         }
 
         //first delete all other tokens of the same type
-        userTokenModel.destroy({type: type, userId: userId}).success(successDelete).error(error);
+        userTokenModel.deleteAllTokensSameType(userId, type, successDelete);
+    }
+
+    userTokenModel.deleteAllTokensSameType = function(userId, type, success, error){
+        
+        var destroy = userTokenModel.destroy({type: type, userId: userId});
+
+        if(success){
+            destroy.success(success);
+        }
+
+        if(error){
+            destroy.error(error);
+        }
     }
 
     /**

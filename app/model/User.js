@@ -1,5 +1,6 @@
 var logger = require("../../config/logger");
 var crypto = require('crypto');
+var randomString = require('randomstring');
 
 module.exports = function(sequelize, DataTypes) {
 
@@ -54,6 +55,11 @@ module.exports = function(sequelize, DataTypes) {
         instanceMethods: {
 
             encryptPassword: function(plainPassword) { 
+
+                if(!this.salt){
+                    this.salt = randomString.generate(10);
+                }
+
                 var cipher = crypto.createCipher('aes-256-cbc', this.salt);
                 cipher.update(plainPassword, 'utf8', 'base64');
                 var encryptedPassword = cipher.final('base64')

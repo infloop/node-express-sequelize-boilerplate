@@ -16,28 +16,40 @@ module.exports.all = function(req, res){
 
     var userRepository = repositoryFactory.getUserRepository();
 
+    var offset = (req.param('offset') > 0 ? req.param('offset') : 1) - 1;
+    var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
+
     var success = function(result) {
+        result.offset = offset;
+        result.limit = limit;
         res.status(200).json(userResource.buildList(result));
     }
 
     var error = function(err) {
         res.status(500).json(err);
     }
-
-    var offset = (req.param('offset') > 0 ? req.param('offset') : 1) - 1;
-    var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
+    
 
     var options = {
         offset: offset,
         limit: limit
     }
 
+    var username = req.param("username");
+    if(username){
+        options.username = username;
+    }
+
+    var email = req.param("email");
+    if(email){
+        options.email = email;
+    }
+
     userRepository.getAllUsers(options, success, error);
 }
 
 /**
- * This method return to the previous page, before login.
- * If no previous page exists, then redirect to index page
+ * 
  */
 module.exports.doLogin = function(req, res) {
 
@@ -66,11 +78,27 @@ module.exports.doLogin = function(req, res) {
  * Logs out the user from app
  */
 module.exports.doLogout = function(req, res){
-    var cookieName = config.app.cookieName;
-    //set cookie
-    res.clearCookie(cookieName);
-    //redirect to login page
-    res.redirect("/login");
+
+    var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
+
+    var tokenFromRequest = authorization.getTokenFromRequest(req);
+
+    var successFind = function(token){
+        
+        if(token){
+            var type = authorization.getTokenType(req);
+
+            //then delete all tokens of the same type for the current user
+            userTokenRepository.deleteAllTokensSameType(token.userId, type);
+        }
+    }
+
+    var errorFind = function(error){
+        res.status(500).json(error);
+    }
+
+    //first find the token
+    userTokenRepository.findByToken(tokenFromRequest, successFind, errorFind);
 }
 
 /*
