@@ -169,7 +169,7 @@ module.exports.getUserById = function(req, res) {
 module.exports.updateUserById = function(req, res) {
 
     var success = function(user) {
-        res.status(200).json(userResource.build(user));
+        res.status(200).json("OK");
     };
 
     var error = function(error) {
