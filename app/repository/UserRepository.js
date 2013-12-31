@@ -42,6 +42,14 @@ module.exports = function(userModel) {
 	}
 
     userModel.updateById = function(id, updatedUser, success, error) {
+    	
+    	//encrypt password if requested
+    	if(updatedUser.password){	
+	    	var instance = userModel.build();
+	    	var encryptedPassword = instance.encryptPassword(updatedUser.password);
+	    	updatedUser.password = encryptedPassword;
+    	}
+
     	// update(updated entity, where clause)
         userModel.update(updatedUser, {id: id}).success(success).error(error);
 	}
