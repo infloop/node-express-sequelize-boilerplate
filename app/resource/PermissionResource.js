@@ -9,13 +9,13 @@ var logger = require("../../config/logger");
 /**
  * Build the permission resource by adding or deleting some properties.
  * This is better than exposing the model directly since we build
- * the response manually. We do not let sensitive data to be sent
- * (i.e password and salt)
- * @param userModel the JSON string representing a user model
+ * the response manually.
+ * @param permissionModel the JSON string representing a permission model
  */
 module.exports.build = function(permissionModel, additional){
 
 	var result = {
+		name: permissionModel.name,
 		httpVerb: permissionModel.httpVerb,
 		uri: permissionModel.uri
 	}
@@ -24,16 +24,25 @@ module.exports.build = function(permissionModel, additional){
 }
 
 module.exports.buildList = function(permissionModels){
-	if(Array.isArray(permissionModels)){
+	if(Array.isArray(permissionModels.rows)){
 		var array = [];
+		var rows = permissionModels.rows;
 
-		for(var i = 0; i < permissionModels.length; i++) {
-			var builtPermission = module.exports.build(permissionModels[i]);
+		for(var i = 0; i < rows.length; i++) {
+			var builtPermission = module.exports.build(rows[i]);
 			logger.debug(builtPermission);
 			array.push(builtPermission);
 		}
 
-		return array;
+		return {
+			"permissions": array,
+			"pagination": {
+				"offset": permissionModels.offset,
+				"page": Math.ceil(permissionModels.offset/permissionModels.limit),
+				"limit": permissionModels.limit,
+				"count": permissionModels.count
+			}
+		};
 	}else{
 		return module.exports.build(permissionModels);
 	}

@@ -3,7 +3,7 @@
  */
 var logger = require("../../config/logger");
 var routesConstants = require("../../config/routesConstants");
-var permissionBusiness = require("../business/RoleBusiness");
+var permissionBusiness = require("../business/PermissionBusiness");
 
 /**
  * Following are the routes for permissions.
@@ -26,5 +26,5 @@ module.exports = function (app, passport) {
     app.put(routes.specificPermission, permissionBusiness.updatePermissionByName);
 
     // delete a specific permission.
-    apd.delete(routes.specificPermission, permissionBusiness.deletePermissionByName);
+    app.delete(routes.specificPermission, permissionBusiness.deletePermissionByName);
 };

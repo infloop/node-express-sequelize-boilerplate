@@ -2,6 +2,8 @@ var logger = require("../../config/logger");
 var constants = require("../../config/constants");
 var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
 
+var permissionResource = require("../resource/PermissionResource");
+
 /**
  * This method returns (in the response) all roles
  */
@@ -9,8 +11,13 @@ module.exports.getAllPermissions = function(req, res) {
 
     var permissionRepository = repositoryFactory.getPermissionRepository();
 
+    var offset = (req.param('offset') > 0 ? req.param('offset') : 1) - 1;
+    var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
+
     var success = function(permissions) {
-        res.status(200).json(permissions);
+        permissions.offset = offset;
+        permissions.limit = limit;
+        res.status(200).json(permissionResource.buildList(permissions));
     }
 
     var error = function(err){

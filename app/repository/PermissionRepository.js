@@ -8,7 +8,7 @@ module.exports = function(permissionModel) {
 	 * Finds all results of the permissions table according to the params offset and limit
 	 */
 	permissionModel.getAllPermissions = function(options, success, error) {
-		permissionModel.findAll({offset: options.offset, limit: options.limit}).success(success).error(error);
+		permissionModel.findAndCountAll({offset: options.offset, limit: options.limit}).success(success).error(error);
 	}
 
     /**
