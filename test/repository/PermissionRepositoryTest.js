@@ -62,10 +62,10 @@ describe('PermissionRepository', function () {
 
                 var success = function(result) {
 
-                    result.length.should.equal(totalRegisters);
+                    (result.count).should.equal(totalRegisters);
 
-                    result[0].dataValues.id.should.equal(1);
-                    result[1].dataValues.id.should.equal(2);
+                    result.rows[0].id.should.equal(1);
+                    result.rows[1].id.should.equal(2);
 
                     //here the test ends
                     done();
@@ -141,7 +141,7 @@ describe('PermissionRepository', function () {
         });
     });
 
-    describe('updatePermissionByName method', function () {
+    describe('updatePermission method', function () {
 
         before(function (done) {
 
@@ -166,6 +166,7 @@ describe('PermissionRepository', function () {
 
             var rolename = "prueba1";
 
+            var permissionId = 1;
             var updatedPermissionName = 'admin';
             var updatedPermission = {
 
@@ -178,6 +179,7 @@ describe('PermissionRepository', function () {
                 var success = function(success) {
 
                     var findSuccess = function(result) {
+
                         result.name.should.equal(updatedPermissionName);
                         done();
                     };
@@ -193,7 +195,7 @@ describe('PermissionRepository', function () {
                     throw err;
                 }
 
-                permissionRepository.updatePermissionByName(rolename, updatedPermission, success, error);
+                permissionRepository.updatePermission(permissionId, updatedPermission, success, error);
             };
 
             //first create some example roles
@@ -201,7 +203,7 @@ describe('PermissionRepository', function () {
         });
     });
 
-    describe('deletePermissionByName method', function () {
+    describe('deletePermission method', function () {
 
         before(function (done) {
 
@@ -224,7 +226,7 @@ describe('PermissionRepository', function () {
 
             var totalRegisters = 2;
 
-            var permissionName = "prueba1";
+            var permissionId = "1";
 
             //this is the callback function that gets exectuted after creating example data in db
             var deletePermissionByPermissionName = function() {
@@ -242,7 +244,7 @@ describe('PermissionRepository', function () {
                     throw err;
                 };
 
-                permissionRepository.deletePermissionByName(permissionName, success, error);
+                permissionRepository.deletePermission(permissionId, success, error);
             };
 
             //first create some example roles

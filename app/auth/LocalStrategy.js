@@ -3,7 +3,6 @@ var LocalStrategy = require('passport-local').Strategy;
 var repositoryFactory = require("../repository/RepositoryFactory");
 var constants = require("../../config/constants");
 
-
 module.exports = function (passport, config, app) {
 
 	// use local strategy

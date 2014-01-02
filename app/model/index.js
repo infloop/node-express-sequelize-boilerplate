@@ -50,8 +50,8 @@ models.forEach(function(model) {
 (function(m) {
 
   m.User.belongsTo(m.Role);
-  m.Role.hasMany(m.Permission);
-  m.Permission.hasMany(m.Role);
+  m.Role.hasMany(m.Permission, {onDelete: 'cascade'});
+  m.Permission.hasMany(m.Role, {onDelete: 'cascade'});
   m.UserToken.belongsTo(m.User);
 
 })(module.exports);

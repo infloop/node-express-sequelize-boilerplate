@@ -333,4 +333,93 @@ describe('RoleRepository', function () {
             createRolesAndPermissions(numberOfRegisters, findRolePermissions);
         });
     });
+
+    describe('deleteRoleByName method', function () {
+
+        before(function (done) {
+
+            sequelize = require("../../app/model");
+
+            //connect to in-memory database
+            roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+
+            // Create roles table
+            roleRepository.sync({force: true}).success(function(){
+
+            }).error(function(error) {
+                throw error;
+            });
+
+            // Create permissions table
+            permissionRepository.sync({force: true}).success(function(){
+
+                done();
+
+            }).error(function(error) {
+                throw error;
+            });
+        });
+
+        it('should delete the role matching the given name and its relations in the permissionsroles table.', function (done) {
+
+            var error = function(error) {
+                error(error);
+            };
+
+            var createRolesAndPermissions = function(callback) {
+
+                var roleName = 'admin'
+
+                var roleCreateSucces = function(role) {
+
+                    var permissionCreateSuccess = function(permission) {
+
+                        role.addPermission(permission).success(function() {
+
+                            callback();
+
+                        }).error(error);                    
+                    };
+
+                    var permissionJson = {
+                        'name' : 'prueba1',
+                        'httpVerb': 'post',
+                        'uri': '/api/users'
+                    };
+
+                    var permissionEntry = permissionRepository.create(permissionJson)
+                    .success(permissionCreateSuccess).error(error);
+                };
+
+                var roleEntry = roleRepository.create({ 'name' : roleName })
+                .success(roleCreateSucces).error(error);
+            };
+
+            var roleName = 'admin';
+
+            var deleteRoleCallback = function() {
+
+                var deleteSuccess = function(result) {
+
+                    /*
+
+                    permissionsArray.length.should.equal(1);
+
+                    var permissionOne = permissionsArray[0];
+                    permissionOne.name.should.equal('prueba1');
+                   */
+
+                  logger.warn("************* 1");
+                  logger.warn(result);
+
+                    done();
+                };
+
+                roleRepository.deleteRoleByName(roleName, deleteSuccess, error);
+            };
+
+            createRolesAndPermissions(deleteRoleCallback);
+        });
+    });
 });

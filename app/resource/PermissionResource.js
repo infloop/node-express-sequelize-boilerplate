@@ -24,9 +24,12 @@ module.exports.build = function(permissionModel, additional){
 	return result;
 }
 
-module.exports.buildList = function(permissionModels){
-	if(permissionModels.rows){
-		if(Array.isArray(permissionModels.rows)){
+module.exports.buildList = function(permissionModels) {
+
+	if(permissionModels.rows) {
+
+		if(Array.isArray(permissionModels.rows)) {
+
 			var array = [];
 			var rows = permissionModels.rows;
 
@@ -45,11 +48,13 @@ module.exports.buildList = function(permissionModels){
 					"count": permissionModels.count
 				}
 			};
-		}else{
+
+		} else {
+
 			return module.exports.build(permissionModels);
 		}
-	}else{
+	} else {
+
 		return module.exports.build(permissionModels);
 	}
-
 }
