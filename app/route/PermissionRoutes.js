@@ -20,11 +20,11 @@ module.exports = function (app, passport) {
     app.post(routes.permissions, permissionBusiness.createPermission);
 
     // Get a specific permission.
-    app.get(routes.specificPermission, permissionBusiness.getPermissionByName);
+    app.get(routes.specificPermission, permissionBusiness.getPermission);
 
     // Update a specific permission.
-    app.put(routes.specificPermission, permissionBusiness.updatePermissionByName);
+    app.put(routes.specificPermission, permissionBusiness.updatePermission);
 
     // delete a specific permission.
-    app.delete(routes.specificPermission, permissionBusiness.deletePermissionByName);
+    app.delete(routes.specificPermission, permissionBusiness.deletePermission);
 };

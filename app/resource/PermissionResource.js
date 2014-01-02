@@ -15,6 +15,7 @@ var logger = require("../../config/logger");
 module.exports.build = function(permissionModel, additional){
 
 	var result = {
+		id: permissionModel.id,
 		name: permissionModel.name,
 		httpVerb: permissionModel.httpVerb,
 		uri: permissionModel.uri
@@ -24,25 +25,29 @@ module.exports.build = function(permissionModel, additional){
 }
 
 module.exports.buildList = function(permissionModels){
-	if(Array.isArray(permissionModels.rows)){
-		var array = [];
-		var rows = permissionModels.rows;
+	if(permissionModels.rows){
+		if(Array.isArray(permissionModels.rows)){
+			var array = [];
+			var rows = permissionModels.rows;
 
-		for(var i = 0; i < rows.length; i++) {
-			var builtPermission = module.exports.build(rows[i]);
-			logger.debug(builtPermission);
-			array.push(builtPermission);
-		}
-
-		return {
-			"permissions": array,
-			"pagination": {
-				"offset": permissionModels.offset,
-				"page": Math.ceil(permissionModels.offset/permissionModels.limit),
-				"limit": permissionModels.limit,
-				"count": permissionModels.count
+			for(var i = 0; i < rows.length; i++) {
+				var builtPermission = module.exports.build(rows[i]);
+				logger.debug(builtPermission);
+				array.push(builtPermission);
 			}
-		};
+
+			return {
+				"permissions": array,
+				"pagination": {
+					"offset": permissionModels.offset,
+					"page": Math.ceil(permissionModels.offset/permissionModels.limit),
+					"limit": permissionModels.limit,
+					"count": permissionModels.count
+				}
+			};
+		}else{
+			return module.exports.build(permissionModels);
+		}
 	}else{
 		return module.exports.build(permissionModels);
 	}

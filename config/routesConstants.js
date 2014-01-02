@@ -27,7 +27,7 @@ module.exports.getRoutes = function() {
 
         // Permissions
         permissions: "/api/permissions",
-        specificPermission: "/api/permissions/:permissionName"
+        specificPermission: "/api/permissions/:id"
     }
 
     return routes;

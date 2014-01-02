@@ -12,7 +12,7 @@ module.exports = function(permissionModel) {
 	}
 
     /**
-     * Update a permission given its name.
+     * Get a permission given its name.
      */
     permissionModel.getPermissionByName = function(permissionName, success, error) {
         // update(updated entity, where clause)
@@ -20,18 +20,26 @@ module.exports = function(permissionModel) {
     }
 
     /**
-     * Update a permission given its name.
+     * Get a permission given its id.
      */
-    permissionModel.updatePermissionByName = function(permissionName, updatedPermission, success, error) {
+    permissionModel.getPermissionById = function(id, success, error) {
         // update(updated entity, where clause)
-        permissionModel.update(updatedPermission, { name: permissionName }).success(success).error(error);
+        permissionModel.find({ where: { id: id } }).success(success).error(error);
     }
 
     /**
-     * Delete a permission given its name.
+     * Update a permission given its id.
      */
-    permissionModel.deletePermissionByName = function(permissionName, success, error) {
-        permissionModel.destroy({ name: permissionName }).success(success).error(error);
+    permissionModel.updatePermission = function(id, updatedPermission, success, error) {
+        // update(updated entity, where clause)
+        permissionModel.update(updatedPermission, { id: id }).success(success).error(error);
+    }
+
+    /**
+     * Delete a permission given its id.
+     */
+    permissionModel.deletePermission = function(id, success, error) {
+        permissionModel.destroy({ id: id }).success(success).error(error);
     }
 
     /**
