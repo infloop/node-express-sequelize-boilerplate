@@ -8,6 +8,10 @@ var sequelize;
 
 describe('RoleRepository', function () {
 
+    var error = function(err) {
+        throw err;
+    };
+
     var createRoles = function(total, cb) {
 
         var arrayObjs = [];
@@ -18,15 +22,55 @@ describe('RoleRepository', function () {
 
         var success = function() {
             cb();
-        }
-
-        var error = function(err) {
-            throw err;
-        }
+        };
 
         roleRepository.bulkCreate(arrayObjs).success(success).error(error);
-    }
+    };
 
+    var createPermissions = function(numberOfPermissions, callback) {
+
+        var permissionsArray = [];
+
+        for (var i = 0; i < numberOfPermissions; i++) {
+
+            var permission = {
+
+                name: 'create' + i,
+                httpVerb: 'verb' + i,
+                uri: '/api/resource-x/' + i
+            };
+            
+            permissionsArray.push(permission);
+        }
+
+        var success = function(createdPermissions) {
+            callback(createdPermissions);
+        };
+
+        permissionRepository.create(permissionsArray).success(success).error(error);
+    };
+
+    var createRolesAndPermissions = function(numberOfPermissionsPerRole, callback) {
+
+        var role = {
+
+            name: 'admin'
+        };
+
+        roleRepository.create(role).success(function(createdRole) {
+
+            var permissionsSuccess = function(createdPermissions) {
+
+                var success = function(result) {
+                    callback(result);
+                };
+
+                createdRole.setPermissions(createdPermissions).success(success).error(error);
+            };
+
+            createPermissions(numberOfPermissionsPerRole, permissionsSuccess);
+        });
+    };
 
     describe('all method', function () {
 
@@ -42,10 +86,7 @@ describe('RoleRepository', function () {
 
                 done();	
 
-            }).error(function(error) {
-                throw error;
-            });
-
+            }).error(error);
 
         });
 
@@ -79,20 +120,18 @@ describe('RoleRepository', function () {
                     limit: limit
                 }
 
-
                 roleRepository.getAllRoles(options, success, error);
             };
 
             //first create some example roles
             createRoles(totalRegisters, find);
-
         });
 
     });
 
     describe('getRoleByName method', function () {
 
-        before(function (done) {
+        before(function(done) {
 
             sequelize = require("../../app/model");
 
@@ -104,9 +143,7 @@ describe('RoleRepository', function () {
 
                 done();	
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should find a role', function (done) {
@@ -153,9 +190,7 @@ describe('RoleRepository', function () {
 
                 done();	
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should update a role', function (done) {
@@ -213,9 +248,7 @@ describe('RoleRepository', function () {
 
                 done();	
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should delete a role', function (done) {
@@ -258,21 +291,21 @@ describe('RoleRepository', function () {
             roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
             permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
 
+            var error = function(error) {
+                error(error);
+            };
+
             // Create roles table
             roleRepository.sync({force: true}).success(function(){
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
 
             // Create permissions table
             permissionRepository.sync({force: true}).success(function(){
 
                 done();
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should return the permissions of the given role', function (done) {
@@ -281,38 +314,7 @@ describe('RoleRepository', function () {
                 error(error);
             };
 
-            var createRolesAndPermissions = function(totalRegisters, callback) {
-
-                var roleName = 'admin'
-
-                var roleCreateSucces = function(role) {
-
-                    var permissionCreateSuccess = function(permission) {
-
-                        role.addPermission(permission).success(function() {
-
-                            callback();
-
-                        }).error(error);                    
-                    };
-
-                    var permissionJson = {
-                        'name' : 'prueba1',
-                        'httpVerb': 'post',
-                        'uri': '/api/users'
-                    };
-
-                    var permissionEntry = permissionRepository.create(permissionJson)
-                    .success(permissionCreateSuccess).error(error);
-
-
-                };
-
-                var roleEntry = roleRepository.create({ 'name' : roleName })
-                .success(roleCreateSucces).error(error);
-            };
-
-            var numberOfRegisters = 3;
+            var numberOfPermissions = 3;
             var roleName = 'admin';
 
             var findRolePermissions = function() {
@@ -330,7 +332,7 @@ describe('RoleRepository', function () {
                 roleRepository.getRolePermissions(roleName, findSuccess, error);
             };
 
-            createRolesAndPermissions(numberOfRegisters, findRolePermissions);
+            createRolesAndPermissions(numberOfPermissions, findRolePermissions);
         });
     });
 
@@ -354,46 +356,15 @@ describe('RoleRepository', function () {
             // Create permissions table
             permissionRepository.sync({force: true}).success(function(){
 
-                done();
+                // done();
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should delete the role matching the given name and its relations in the permissionsroles table.', function (done) {
 
             var error = function(error) {
                 error(error);
-            };
-
-            var createRolesAndPermissions = function(callback) {
-
-                var roleName = 'admin'
-
-                var roleCreateSucces = function(role) {
-
-                    var permissionCreateSuccess = function(permission) {
-
-                        role.addPermission(permission).success(function() {
-
-                            callback();
-
-                        }).error(error);                    
-                    };
-
-                    var permissionJson = {
-                        'name' : 'prueba1',
-                        'httpVerb': 'post',
-                        'uri': '/api/users'
-                    };
-
-                    var permissionEntry = permissionRepository.create(permissionJson)
-                    .success(permissionCreateSuccess).error(error);
-                };
-
-                var roleEntry = roleRepository.create({ 'name' : roleName })
-                .success(roleCreateSucces).error(error);
             };
 
             var roleName = 'admin';
@@ -404,14 +375,14 @@ describe('RoleRepository', function () {
 
                     /*
 
-                    permissionsArray.length.should.equal(1);
+                       permissionsArray.length.should.equal(1);
 
-                    var permissionOne = permissionsArray[0];
-                    permissionOne.name.should.equal('prueba1');
-                   */
+                       var permissionOne = permissionsArray[0];
+                       permissionOne.name.should.equal('prueba1');
+                       */
 
-                  logger.warn("************* 1");
-                  logger.warn(result);
+                    logger.warn("************* 1");
+                    logger.warn(result);
 
                     done();
                 };
