@@ -85,16 +85,25 @@ module.exports.create = function(req, res) {
 
 module.exports.updateRole = function(req, res) {
 
-    var success = function() {
-        res.status(200).json("OK");
+    var roleRepository = repositoryFactory.getRoleRepository();
+    
+    // permissions id list.
+    var permissionsList = req.body.permissions;
+
+    // Role 
+    var jsonRole = req.body;
+    //delete permissions
+    delete jsonRole.permissions;
+
+    var success = function(createRole) {
+        res.status(200).json(roleResource.build(createRole));
     };
 
     var error = function(error) {
         res.status(500).json(error);
     };
 
-    var roleRepository = repositoryFactory.getRoleRepository();
-    roleRepository.updateRole(req.params.id, req.body, success, error);
+    roleRepository.updateRole(jsonRole, permissionsList, success, error);
 }
 
 module.exports.deleteRole = function(req, res) {

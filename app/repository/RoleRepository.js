@@ -7,6 +7,9 @@ var repositoryFactory = require("../repository/RepositoryFactory").getRepository
 module.exports = function(roleModel) {
 
     roleModel.createRole = function(jsonRole, permissionsIdList, success, error) {
+        
+        var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
+        var permissionRepository = repositoryFactory.getPermissionRepository();
 
         var permissionRepository = repositoryFactory.getPermissionRepository();
 
@@ -68,9 +71,28 @@ module.exports = function(roleModel) {
         roleModel.find({ where: { id: id } }).success(successFind).error(error);
     }
 
-    roleModel.updateRole = function(id, updatedRole, success, error) {
+    roleModel.updateRole = function(updatedRole, success, error) {
 
-        roleModel.update(updatedRole, { id: id }).success(success).error(error);
+        var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
+        var permissionRepository = repositoryFactory.getPermissionRepository();
+
+        roleModel.update(updatedRole, { id: updatedRole.id }).success(function(role) {
+
+            var permissionsArray = [];
+
+            for(var i = 0; i < permissionsIdList.length; i++) {
+
+                var built = permissionRepository.build({ id: permissionsIdList[i] });
+                permissionsArray.push(built);
+            }
+
+            role.setPermissions(permissionsArray).success(function() {
+
+                role.permissions = permissionsArray;
+                success(role);
+
+            }).error(error);
+        });
     }
 
     roleModel.deleteRole = function(id, success, error) {
