@@ -108,7 +108,7 @@ module.exports.create = function(req, res) {
     roleEntry.save().success(successSave).error(error);
 }
 
-module.exports.updateRoleByName = function(req, res) {
+module.exports.updateRole = function(req, res) {
 
     var success = function() {
         res.status(200).json("OK");
@@ -122,7 +122,7 @@ module.exports.updateRoleByName = function(req, res) {
     roleRepository.updateRole(req.params.id, req.body, success, error);
 }
 
-module.exports.deleteRoleByName = function(req, res) {
+module.exports.deleteRole = function(req, res) {
 
     var success = function() {
         res.status(200).json("OK");
