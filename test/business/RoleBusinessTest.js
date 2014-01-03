@@ -59,6 +59,13 @@ describe('RoleBusiness', function () {
                         }
                     }
                 });
+
+                roleBusiness.__set__("roleResource", {
+
+                    buildList: function(roles) {
+                        return expectedResult;
+                    }
+                });
             };
 
             //set up mocks
@@ -132,7 +139,9 @@ describe('RoleBusiness', function () {
             var request = {
 
                 body: {
-                    'name' : 'admin'
+
+                    "name" : "admin",
+                    permissions: []
                 }
             };
 
@@ -315,10 +324,7 @@ describe('RoleBusiness', function () {
 
             var expectedStatus = 200;
 
-            var expectedResult = {
-
-                "name": "root"
-            };
+            var expectedResult = "OK";
 
             var response = {
 
@@ -371,11 +377,7 @@ describe('RoleBusiness', function () {
             };
 
             var expectedStatus = 200;
-
-            var expectedResult = {
-
-                "name": "admin"
-            };
+            var expectedResult = "OK";
 
             var response = {
 

@@ -114,10 +114,10 @@ describe('RoleRepository', function () {
 
                 var success = function(result) {
 
-                    result.length.should.equal(totalRegisters);
+                    (result.count).should.equal(totalRegisters);
 
-                    result[0].dataValues.id.should.equal(1);
-                    result[1].dataValues.id.should.equal(2);
+                    result.rows[0].id.should.equal(1);
+                    result.rows[1].id.should.equal(2);
 
                     //here the test ends
                     done();
@@ -221,11 +221,14 @@ describe('RoleRepository', function () {
             };
 
             //this is the callback function that gets exectuted after creating example data in db
-            var updateByRolename = function() {
+            var updateByRoleCallback = function() {
 
                 var success = function(success) {
 
                     var findSuccess = function(result) {
+
+                        logger.warn(result);
+
                         result.name.should.equal(updatedRoleName);
                         done();
                     };
@@ -241,11 +244,11 @@ describe('RoleRepository', function () {
                     throw err;
                 }
 
-                roleRepository.updateRoleByName(rolename, updatedRole, success, error);
+                roleRepository.updateRole(rolename, updatedRole, success, error);
             };
 
             //first create some example roles
-            createRoles(totalRegisters, updateByRolename);
+            createRoles(totalRegisters, updateByRoleCallback);
         });
     });
 
@@ -273,7 +276,7 @@ describe('RoleRepository', function () {
             var rolename = "prueba1";
 
             //this is the callback function that gets exectuted after creating example data in db
-            var deleteRoleByRolename = function() {
+            var deleteRoleCallback = function() {
 
                 var success = function(success) {
 
@@ -288,11 +291,11 @@ describe('RoleRepository', function () {
                     throw err;
                 }
 
-                roleRepository.deleteRoleByName(rolename, success, error);
+                roleRepository.deleteRole(rolename, success, error);
             };
 
             //first create some example roles
-            createRoles(totalRegisters, deleteRoleByRolename);
+            createRoles(totalRegisters, deleteRoleCallback);
         });
     });
 
@@ -369,7 +372,7 @@ describe('RoleRepository', function () {
         it('should return the permissions of the given role', function (done) {
 
             var numberOfPermissions = 3;
-            var roleName = 'admin';
+            var roleId = 0;
 
             var findRolePermissions = function() {
 
@@ -388,7 +391,7 @@ describe('RoleRepository', function () {
                     roleRepository.getRolePermissions(roleName, success, deleteError);
                 };
 
-                roleRepository.deleteRoleByName(roleName, deleteSuccess, error);
+                roleRepository.deleteRole(roleId, deleteSuccess, error);
             };
 
             createRolesAndPermissions(numberOfPermissions, findRolePermissions);
