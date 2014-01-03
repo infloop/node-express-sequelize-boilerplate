@@ -208,6 +208,16 @@ describe('RoleBusiness', function () {
                         }
 
                         return roleRepository;
+                    },
+
+                    getPermissionRepository: function() {
+
+                        return {
+
+                            build: function(permission) {
+                                return "{}";
+                            }
+                        }
                     }
                 });
 
@@ -293,6 +303,16 @@ describe('RoleBusiness', function () {
                         }
 
                         return roleRepository;
+                    },
+
+                    getPermissionRepository: function() {
+
+                        return {
+
+                            build: function(permission) {
+                                return "{}";
+                            }
+                        }
                     }
                 });
             };
