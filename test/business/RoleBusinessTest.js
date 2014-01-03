@@ -348,7 +348,7 @@ describe('RoleBusiness', function () {
 
                     getRoleRepository: function() {
                         return {
-                            updateRoleByName: function(req, req, success, error) {
+                            updateRole: function(req, req, success, error) {
                                 success(expectedResult);
                             }
                         }
@@ -358,7 +358,7 @@ describe('RoleBusiness', function () {
 
             mocks();
 
-            roleBusiness.updateRoleByName(request, response);
+            roleBusiness.updateRole(request, response);
         });
     });
 
@@ -400,7 +400,7 @@ describe('RoleBusiness', function () {
                 roleBusiness.__set__("repositoryFactory", {
                     getRoleRepository: function() {
                         return {
-                            deleteRoleByName: function(req, success, error) {
+                            deleteRole: function(req, success, error) {
                                 success(expectedResult);
                             }
                         }
@@ -410,7 +410,7 @@ describe('RoleBusiness', function () {
 
             mocks();
 
-            roleBusiness.deleteRoleByName(request, response);
+            roleBusiness.deleteRole(request, response);
         });
     });
 

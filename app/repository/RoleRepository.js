@@ -50,7 +50,17 @@ module.exports = function(roleModel) {
 
     roleModel.deleteRole = function(id, success, error) {
 
-        roleModel.destroy({ id: id }).success(success).error(error);
+        // Remove the permissions associated with the role.
+
+        var getSuccess = function(role) {
+
+            role.setPermissions([]).success(function(successResult) {
+
+                roleModel.destroy({ id: id }).success(success).error(error);
+            });
+        };
+
+        this.getRoleById(id, getSuccess, error);
     }
 
     roleModel.getRolePermissionsById = function(id, success, error) {

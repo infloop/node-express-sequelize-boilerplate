@@ -212,7 +212,7 @@ describe('RoleRepository', function () {
 
             var totalRegisters = 2;
 
-            var rolename = "prueba1";
+            var roleId = 1;
 
             var updatedRoleName = 'admin';
             var updatedRole = {
@@ -244,7 +244,7 @@ describe('RoleRepository', function () {
                     throw err;
                 }
 
-                roleRepository.updateRole(rolename, updatedRole, success, error);
+                roleRepository.updateRole(roleId, updatedRole, success, error);
             };
 
             //first create some example roles
@@ -388,7 +388,7 @@ describe('RoleRepository', function () {
                         done();
                     }
 
-                    roleRepository.getRolePermissions(roleName, success, deleteError);
+                    roleRepository.getRolePermissions(roleId, success, deleteError);
                 };
 
                 roleRepository.deleteRole(roleId, deleteSuccess, error);
