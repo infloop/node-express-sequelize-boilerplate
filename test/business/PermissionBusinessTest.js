@@ -53,6 +53,12 @@ describe('PermissionBusiness', function () {
                         }
                     }
                 });
+
+                permissionBusiness.__set__("permissionResource", {
+                    buildList: function(permissions) {
+                        return expectedResult;
+                    }
+                });
             }
 
             //set up mocks
@@ -115,7 +121,7 @@ describe('PermissionBusiness', function () {
         });
     });
 
-    describe('getPermissionByName method', function () {
+    describe('getPermission method', function () {
 
         it('should return 200 OK', function (done) {
 
@@ -160,10 +166,16 @@ describe('PermissionBusiness', function () {
                 permissionBusiness.__set__("repositoryFactory", {
                     getPermissionRepository: function() {
                         return {
-                            getPermissionByName: function(permissionName, success, error) {
+                            getPermissionById: function(permissionName, success, error) {
                                 success(expectedResult);
                             }
                         }
+                    }
+                });
+
+                permissionBusiness.__set__("permissionResource", {
+                    buildList: function(permission) {
+                        return expectedResult;
                     }
                 });
             }
@@ -171,7 +183,7 @@ describe('PermissionBusiness', function () {
             //set up mocks
             mocks();
 
-            permissionBusiness.getPermissionByName(request, response);
+            permissionBusiness.getPermission(request, response);
         });
 
         it('should return 500 Error', function (done) {
@@ -217,7 +229,7 @@ describe('PermissionBusiness', function () {
                 permissionBusiness.__set__("repositoryFactory", {
                     getPermissionRepository: function(req) {
                         return {
-                            getPermissionByName: function(permissionName, success, error) {
+                            getPermissionById: function(permissionName, success, error) {
                                 error(expectedResult);
                             }
                         }
@@ -228,23 +240,18 @@ describe('PermissionBusiness', function () {
             //set up mocks
             mocks();
 
-            permissionBusiness.getPermissionByName(request, response);
+            permissionBusiness.getPermission(request, response);
         });
     });
 
-    describe('updatePermissionByName method', function () {
+    describe('updatePermission method', function () {
 
         it('should return 200 OK', function (done) {
 
             //attention: it's rewire not require :)
             var permissionBusiness = rewire("../../app/business/PermissionBusiness");
 
-            var expectedResult = {
-                'name': 'root',
-                'httpVerb': 'get',
-                'uri': '/api/permissions'
-            }
-
+            var expectedResult = "OK";
             var expectedStatus = 200;
 
             var permissionName = 'admin';
@@ -286,7 +293,7 @@ describe('PermissionBusiness', function () {
                 permissionBusiness.__set__("repositoryFactory", {
                     getPermissionRepository: function(req) {
                         return {
-                            updatePermissionByName: function(permissionName, updatedPermission, success, error) {
+                            updatePermission: function(permissionName, updatedPermission, success, error) {
                                 success(expectedResult);
                             }
                         }
@@ -297,7 +304,7 @@ describe('PermissionBusiness', function () {
             //set up mocks
             mocks();
 
-            permissionBusiness.updatePermissionByName(request, response);
+            permissionBusiness.updatePermission(request, response);
         });
 
         it('should return 500 Error', function (done) {
@@ -350,7 +357,7 @@ describe('PermissionBusiness', function () {
                 permissionBusiness.__set__("repositoryFactory", {
                     getPermissionRepository: function(req) {
                         return {
-                            updatePermissionByName: function(permissionName, updatedPermission, success, error) {
+                            updatePermission: function(permissionName, updatedPermission, success, error) {
                                 error(expectedResult);
                             }
                         }
@@ -361,23 +368,18 @@ describe('PermissionBusiness', function () {
             //set up mocks
             mocks();
 
-            permissionBusiness.updatePermissionByName(request, response);
+            permissionBusiness.updatePermission(request, response);
         });
     });
 
-    describe('deletePermissionByName method', function () {
+    describe('deletePermission method', function () {
 
         it('should return 200 OK', function (done) {
 
             //attention: it's rewire not require :)
             var permissionBusiness = rewire("../../app/business/PermissionBusiness");
 
-            var expectedResult = {
-                'name': 'root',
-                'httpVerb': 'get',
-                'uri': '/api/permissions'
-            }
-
+            var expectedResult = "OK";
             var expectedStatus = 200;
 
             var permissionName = 'admin';
@@ -412,7 +414,7 @@ describe('PermissionBusiness', function () {
                 permissionBusiness.__set__("repositoryFactory", {
                     getPermissionRepository: function(req) {
                         return {
-                            deletePermissionByName: function(permissionName, success, error) {
+                            deletePermission: function(permissionName, success, error) {
                                 success(expectedResult);
                             }
                         }
@@ -423,7 +425,7 @@ describe('PermissionBusiness', function () {
             //set up mocks
             mocks();
 
-           permissionBusiness.deletePermissionByName(request, response);
+           permissionBusiness.deletePermission(request, response);
         });
 
         it('should return 500 Error', function (done) {
@@ -469,7 +471,7 @@ describe('PermissionBusiness', function () {
                 permissionBusiness.__set__("repositoryFactory", {
                     getPermissionRepository: function(req) {
                         return {
-                            deletePermissionByName: function(permissionName, success, error) {
+                            deletePermission: function(permissionName, success, error) {
                                 error(expectedResult);
                             }
                         }
@@ -480,7 +482,7 @@ describe('PermissionBusiness', function () {
             //set up mocks
             mocks();
 
-           permissionBusiness.deletePermissionByName(request, response);
+           permissionBusiness.deletePermission(request, response);
         });
     });
 });

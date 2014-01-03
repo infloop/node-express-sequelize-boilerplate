@@ -8,6 +8,13 @@ var sequelize;
 
 describe('RoleRepository', function () {
 
+    var error = function(err) {
+
+        logger.warn('Error!!!!!!!!!!!!!!!!!!');
+        logger.warn(err);
+        throw err;
+    };
+
     var createRoles = function(total, cb) {
 
         var arrayObjs = [];
@@ -18,15 +25,67 @@ describe('RoleRepository', function () {
 
         var success = function() {
             cb();
-        }
-
-        var error = function(err) {
-            throw err;
-        }
+        };
 
         roleRepository.bulkCreate(arrayObjs).success(success).error(error);
-    }
+    };
 
+    var createPermissions = function(numberOfPermissions, callback) {
+
+        var permissionsArray = [];
+
+        for (var i = 0; i < numberOfPermissions; i++) {
+
+            var permission = {
+
+                name: 'create' + i,
+                httpVerb: 'verb' + i,
+                uri: '/api/resource-x/' + i
+            };
+            
+            permissionsArray.push(permission);
+        }
+
+        var success = function(createdPermissions) {
+            callback(createdPermissions);
+        };
+
+        permissionRepository.bulkCreate(permissionsArray).success(success).error(error);
+    };
+
+    var createRolesAndPermissions = function(numberOfPermissionsPerRole, callback) {
+
+        var role = {
+            name: 'admin'
+        };
+
+        roleRepository.create(role).success(function(createdRole) {
+
+            var k = 0;
+
+            for (var i = 0; i < numberOfPermissionsPerRole; i++) {
+
+                var permission = {
+
+                    name: 'prueba' + i,
+                    httpVerb: 'verb' + i,
+                    uri: '/api/resource-x/' + i
+                };
+                
+                permissionRepository.create(permission).success(function(createdPermission) {
+
+                    createdRole.addPermission(createdPermission).success(function() {
+
+                        k++;
+
+                        if (k == (numberOfPermissionsPerRole - 1)) {
+                            callback();
+                        }
+                    });
+                });
+            }
+        });
+    };
 
     describe('all method', function () {
 
@@ -42,10 +101,7 @@ describe('RoleRepository', function () {
 
                 done();	
 
-            }).error(function(error) {
-                throw error;
-            });
-
+            }).error(error);
 
         });
 
@@ -79,20 +135,18 @@ describe('RoleRepository', function () {
                     limit: limit
                 }
 
-
                 roleRepository.getAllRoles(options, success, error);
             };
 
             //first create some example roles
             createRoles(totalRegisters, find);
-
         });
 
     });
 
     describe('getRoleByName method', function () {
 
-        before(function (done) {
+        before(function(done) {
 
             sequelize = require("../../app/model");
 
@@ -104,9 +158,7 @@ describe('RoleRepository', function () {
 
                 done();	
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should find a role', function (done) {
@@ -153,9 +205,7 @@ describe('RoleRepository', function () {
 
                 done();	
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should update a role', function (done) {
@@ -168,7 +218,7 @@ describe('RoleRepository', function () {
             var updatedRole = {
 
                 'name' : updatedRoleName,
-            }
+            };
 
             //this is the callback function that gets exectuted after creating example data in db
             var updateByRolename = function() {
@@ -213,9 +263,7 @@ describe('RoleRepository', function () {
 
                 done();	
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should delete a role', function (done) {
@@ -261,68 +309,29 @@ describe('RoleRepository', function () {
             // Create roles table
             roleRepository.sync({force: true}).success(function(){
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
 
             // Create permissions table
             permissionRepository.sync({force: true}).success(function(){
 
                 done();
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
         });
 
         it('should return the permissions of the given role', function (done) {
 
-            var error = function(error) {
-                error(error);
-            };
-
-            var createRolesAndPermissions = function(totalRegisters, callback) {
-
-                var roleName = 'admin'
-
-                var roleCreateSucces = function(role) {
-
-                    var permissionCreateSuccess = function(permission) {
-
-                        role.addPermission(permission).success(function() {
-
-                            callback();
-
-                        }).error(error);                    
-                    };
-
-                    var permissionJson = {
-                        'name' : 'prueba1',
-                        'httpVerb': 'post',
-                        'uri': '/api/users'
-                    };
-
-                    var permissionEntry = permissionRepository.create(permissionJson)
-                    .success(permissionCreateSuccess).error(error);
-
-
-                };
-
-                var roleEntry = roleRepository.create({ 'name' : roleName })
-                .success(roleCreateSucces).error(error);
-            };
-
-            var numberOfRegisters = 3;
+            var numberOfPermissions = 3;
             var roleName = 'admin';
 
             var findRolePermissions = function() {
 
                 var findSuccess = function(permissionsArray) {
 
-                    permissionsArray.length.should.equal(1);
+                    permissionsArray.length.should.equal(numberOfPermissions);
 
                     var permissionOne = permissionsArray[0];
-                    permissionOne.name.should.equal('prueba1');
+                    permissionOne.name.should.equal('prueba0');
 
                     done();
                 };
@@ -330,7 +339,59 @@ describe('RoleRepository', function () {
                 roleRepository.getRolePermissions(roleName, findSuccess, error);
             };
 
-            createRolesAndPermissions(numberOfRegisters, findRolePermissions);
+            createRolesAndPermissions(numberOfPermissions, findRolePermissions);
+        });
+    });
+
+    describe('deleteRoleByName method', function () {
+
+        before(function (done) {
+
+            sequelize = require("../../app/model");
+
+            //connect to in-memory database
+            roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+
+            // Create roles table
+            roleRepository.sync({force: true}).success(function(){
+
+            }).error(error);
+
+            // Create permissions table
+            permissionRepository.sync({force: true}).success(function(){
+
+                done();
+
+            }).error(error);
+        });
+
+        it('should return the permissions of the given role', function (done) {
+
+            var numberOfPermissions = 3;
+            var roleName = 'admin';
+
+            var findRolePermissions = function() {
+
+                var deleteSuccess = function() {
+
+                    var success = function() {
+
+                        throw "shouldn't be here because there is no role with name admin."
+                    };
+
+                    var deleteError = function(error) {
+                        // Expect to be here because there is no role with name admin
+                        done();
+                    }
+
+                    roleRepository.getRolePermissions(roleName, success, deleteError);
+                };
+
+                roleRepository.deleteRoleByName(roleName, deleteSuccess, error);
+            };
+
+            createRolesAndPermissions(numberOfPermissions, findRolePermissions);
         });
     });
 });

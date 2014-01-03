@@ -54,10 +54,10 @@ describe('UserRepository', function () {
 				
 				var success = function(result) {
 
-					result.length.should.equal(totalRegisters);
+					(result.count).should.equal(totalRegisters);
 
-					result[0].dataValues.id.should.equal(1);
-					result[1].dataValues.id.should.equal(2);
+					result.rows[0].id.should.equal(1);
+					result.rows[1].id.should.equal(2);
 
 					//here the test ends
 					done();

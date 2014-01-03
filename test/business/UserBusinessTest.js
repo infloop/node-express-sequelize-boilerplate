@@ -180,6 +180,13 @@ describe('UserBusiness', function () {
                         }
                     }
                 });
+
+                userBusiness.__set__("userResource" , {
+
+                    build: function(user) {
+                        return expectedResult;
+                    }
+                });
             };
 
             //set up mocks
@@ -250,12 +257,7 @@ describe('UserBusiness', function () {
             //attention: it's rewire not require :)
             var userBusiness = rewire("../../app/business/UserBusiness");
 
-            var expectedResult = {
-                'username' : 'qwe',
-                'password' : 'pwd',
-                'email' : 'qwe@domain.com'
-            };
-
+            var expectedResult = "OK";
             var expectedStatus = 200;
 
             var request = {
@@ -314,11 +316,7 @@ describe('UserBusiness', function () {
             //attention: it's rewire not require :)
             var userBusiness = rewire("../../app/business/UserBusiness");
 
-            var expectedResult = {
-                'username' : 'qwe',
-                'password' : 'pwd'
-            };
-
+            var expectedResult = "OK";
             var expectedStatus = 200;
 
             var request = {
