@@ -16,7 +16,8 @@ module.exports.build = function(role, additional){
 
 	var result = {
 		id: role.id,
-		name: role.name
+		name: role.name,
+        permissions: role.permissions
 	}
 
 	return result;
