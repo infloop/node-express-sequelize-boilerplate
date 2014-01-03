@@ -77,9 +77,6 @@ module.exports = function(roleModel) {
         var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
         var permissionRepository = repositoryFactory.getPermissionRepository();
 
-        var builtRole = roleModel.build(updatedRole);
-        logger.info(builtRole.name);
-
         roleModel.update(updatedRole, { id: updatedRole.id }).success(function() {
 
             var permissionsArray = [];
@@ -89,6 +86,9 @@ module.exports = function(roleModel) {
                 var built = permissionRepository.build({ id: permissionsIdList[i] });
                 permissionsArray.push(built);
             }
+
+            var builtRole = roleModel.build(updatedRole);
+            logger.info(builtRole.name);
 
             builtRole.setPermissions(permissionsArray).success(function() {
 
