@@ -239,51 +239,23 @@ describe('RoleBusiness', function () {
              */
             var mocks = function() {
 
-                //mock getRepository function (i.e. the repository). This way, we do not need the database connection
-                roleBusiness.__set__(
+                roleBusiness.__set__("repositoryFactory", {
 
-                    "repositoryFactory", {
-
-                    getRoleRepository: function(req) {
+                    getRoleRepository: function() {
 
                         return {
+                            createRole: function(jsonRole, permissionsList, success, error) {
 
-                            build:function(req) {
-
-                                var result = {
-
-                                    save: function() {
-
-                                        return result;
-                                    },
-
-                                    success: function(success) {
-
-                                        return result;
-                                    }, 
-
-                                    error: function(error) {
-
-                                        error(expectedResult);
-                                        return result;
-                                    }
-                                }
-
-                                return result;
+                                error(expectedResult);
                             }
                         }
+                    }
+                });
 
-                        return roleRepository;
-                    },
+                roleBusiness.__set__("roleResource" , {
 
-                    getPermissionRepository: function() {
-
-                        return {
-
-                            build: function(permission) {
-                                return "{}";
-                            }
-                        }
+                    build: function(role) {
+                        return expectedResult;
                     }
                 });
             };
@@ -295,7 +267,7 @@ describe('RoleBusiness', function () {
         });
     });
 
-    describe('updateRoleByName method', function () {
+    describe('updateRole method', function () {
 
         it('should return 200 OK', function (done) {
 
@@ -340,9 +312,17 @@ describe('RoleBusiness', function () {
                     getRoleRepository: function() {
                         return {
                             updateRole: function(req, req, success, error) {
-                                success(expectedResult);
+                                success(success);
                             }
                         }
+                    }
+                });
+
+                roleBusiness.__set__("roleResource", {
+
+                    build: function(role) {
+
+                        return expectedResult;
                     }
                 });
             };

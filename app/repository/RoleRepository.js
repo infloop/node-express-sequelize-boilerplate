@@ -8,7 +8,7 @@ var logger = require("../../config/logger");
 module.exports = function(roleModel) {
 
     roleModel.createRole = function(jsonRole, permissionsIdList, success, error) {
-        
+
         var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
         var permissionRepository = repositoryFactory.getPermissionRepository();
 
@@ -105,13 +105,18 @@ module.exports = function(roleModel) {
 
         var getSuccess = function(role) {
 
-            role.setPermissions([]).success(function(successResult) {
+            if (role) {
 
-                roleModel.destroy({ id: id }).success(success).error(error);
-            });
+                role.setPermissions([]).success(function() {
+                    roleModel.destroy({ id: id }).success(success).error(error);
+                });
+
+            } else {
+                error("No hay un rol con ID: " + id);
+            }
         };
 
-        this.getRoleById(id, getSuccess, error);
+        roleModel.getRoleById(id, getSuccess, error);
     }
 
     roleModel.getRolePermissionsById = function(id, success, error) {

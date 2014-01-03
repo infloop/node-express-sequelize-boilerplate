@@ -1,7 +1,6 @@
 var logger = require("../../config/logger");
 var constants = require("../../config/constants");
 var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
-
 var roleResource = require("../resource/RoleResource");
 
 /**
