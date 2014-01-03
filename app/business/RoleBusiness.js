@@ -63,12 +63,14 @@ module.exports.getRole = function(req, res) {
 module.exports.create = function(req, res) {
 
     var roleRepository = repositoryFactory.getRoleRepository();
+    var permissionRepository = repositoryFactory.getPermissionRepository();
 
-    var buildPermissions = function(permissions){
+    var buildPermissions = function(permissions) {
+
         var array = [];
 
-        for(var i=0; i< permissions.length;i++){
-            var built = roleRepository.build({id:  permissions[i]});
+        for(var i = 0; i < permissions.length; i++) {
+            var built = permissionRepository.build({id:  permissions[i]});
             array.push(built);
         }
 
@@ -106,7 +108,7 @@ module.exports.create = function(req, res) {
     roleEntry.save().success(successSave).error(error);
 }
 
-module.exports.updateRoleByName = function(req, res) {
+module.exports.updateRole = function(req, res) {
 
     var success = function() {
         res.status(200).json("OK");
@@ -117,10 +119,10 @@ module.exports.updateRoleByName = function(req, res) {
     };
 
     var roleRepository = repositoryFactory.getRoleRepository();
-    roleRepository.updateRoleByName(req.params.rolename, req.body, success, error);
+    roleRepository.updateRole(req.params.id, req.body, success, error);
 }
 
-module.exports.deleteRoleByName = function(req, res) {
+module.exports.deleteRole = function(req, res) {
 
     var success = function() {
         res.status(200).json("OK");
@@ -131,7 +133,7 @@ module.exports.deleteRoleByName = function(req, res) {
     };
 
     var roleRepository = repositoryFactory.getRoleRepository();
-    roleRepository.deleteRoleByName(req.params.rolename, success, error);
+    roleRepository.deleteRole(req.params.id, success, error);
 };
 
 module.exports.getRolePermissions = function(req, res) {

@@ -23,10 +23,10 @@ module.exports = function (app, passport) {
     app.post(routes.roles, roleBusiness.create);
 
     // Update a given role.
-    app.put(routes.specificRole, roleBusiness.updateRoleByName);
+    app.put(routes.specificRole, roleBusiness.updateRole);
 
     // Delete a specific role.
-    app.delete(routes.specificRole, roleBusiness.deleteRoleByName);
+    app.delete(routes.specificRole, roleBusiness.deleteRole);
 
     // Get all role permissions
     app.get(routes.rolePermissions, roleBusiness.getRolePermissions);
