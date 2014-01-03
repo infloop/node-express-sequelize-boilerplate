@@ -6,7 +6,7 @@ module.exports = {
     loggerLevel: "debug",
     root: rootPath,
     db: {
-      host: "localhost",
+      host: "db.skaphe.com",
       port: "3306",
       name: "test",
       user: "test",
