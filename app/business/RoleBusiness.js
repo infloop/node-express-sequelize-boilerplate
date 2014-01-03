@@ -64,48 +64,24 @@ module.exports.create = function(req, res) {
 
     var roleRepository = repositoryFactory.getRoleRepository();
     var permissionRepository = repositoryFactory.getPermissionRepository();
+    
+    // permissions id list.
+    var permissionsList = req.body.permissions;
 
-    var buildPermissions = function(permissions) {
+    // Role 
+    var jsonRole = req.body;
+    //delete permissions
+    delete jsonRole.permissions;
 
-        var array = [];
-
-        for(var i = 0; i < permissions.length; i++) {
-            var built = permissionRepository.build({ id: permissions[i] });
-            array.push(built);
-        }
-
-        return array;
-    }
-
-    //permissionsParam is used for associating permissions
-    var permissionsParam = req.body.permissions;
-
-    var successSave = function(role) {
-        
-        var successSavePermissions = function(){
-            res.status(201).json(roleResource.build(role));
-        }
-
-        var errorSavePermissions = function(error){
-            res.status(500).json(error);
-        }
-
-        //then save permissions
-        role.setPermissions(buildPermissions(permissionsParam)).success(successSavePermissions).error(errorSavePermissions);
-    }
+    var success = function(createRole) {
+        res.status(200).json(roleResource.build(createRole));
+    };
 
     var error = function(error) {
-
         res.status(500).json(error);
-    }
+    };
 
-    var roleParam = req.body;
-    //delete permissions
-    delete roleParam.permissions;
-
-    //first save the role
-    var roleEntry = roleRepository.build(roleParam);
-    roleEntry.save().success(successSave).error(error);
+    roleRepository.createRole(jsonRole, permissionsList, success, error);
 }
 
 module.exports.updateRole = function(req, res) {

@@ -4,6 +4,27 @@
  */
 module.exports = function(roleModel) {
 
+    roleModel.createRole = function(jsonRole, permissionsIdList, success, error) {
+
+        roleModel.create(jsonRole).success(function(createdRole) {
+
+            var permissionsArray = [];
+
+            for(var i = 0; i < permissionsIdList.length; i++) {
+
+                var built = permissionRepository.build({ id: permissionsIdList[i] });
+                permissionsArray.push(built);
+            }
+
+            createdRole.setPermissions(permissionsArray).success(function() {
+
+                createdRole.permissions = permissionsArray;
+                success(createdRole);
+
+            }).error(error);
+        });
+    };
+
     /**
      * finds all results of the roles table according to the params offset and limit
      */
@@ -37,7 +58,7 @@ module.exports = function(roleModel) {
             }else{
                 success(false);
             }
-            
+
         }
 
         roleModel.find({ where: { id: id } }).success(successFind).error(error);
