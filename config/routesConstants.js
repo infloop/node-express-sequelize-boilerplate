@@ -23,7 +23,7 @@ module.exports.getRoutes = function() {
         tokenPermissions: "/api/tokens/permissions",
 
         // Roles - Permissions relationship
-        rolePermissions: "/api/roles/:rolename/permissions",
+        rolePermissions: "/api/roles/:id/permissions",
 
         // Permissions
         permissions: "/api/permissions",

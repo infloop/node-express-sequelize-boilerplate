@@ -64,12 +64,32 @@ module.exports.create = function(req, res) {
 
     var roleRepository = repositoryFactory.getRoleRepository();
 
-    var success = function(role) {
+    var buildPermissions = function(permissions){
+        var array = [];
 
-        if (role) {
-
-            res.status(201).json(role);
+        for(var i=0; i< permissions.length;i++){
+            var built = roleRepository.build({id:  permissions[i]});
+            array.push(built);
         }
+
+        return array;
+    }
+
+    //permissionsParam is used for associating permissions
+    var permissionsParam = req.body.permissions;
+
+    var successSave = function(role) {
+        
+        var successSavePermissions = function(){
+            res.status(201).json(roleResource.build(role));
+        }
+
+        var errorSavePermissions = function(error){
+            res.status(500).json(error);
+        }
+
+        //then save permissions
+        role.setPermissions(buildPermissions(permissionsParam)).success(successSavePermissions).error(errorSavePermissions);
     }
 
     var error = function(error) {
@@ -77,14 +97,19 @@ module.exports.create = function(req, res) {
         res.status(500).json(error);
     }
 
-    var roleEntry = roleRepository.build(req.body);
-    roleEntry.save().success(success).error(error);
+    var roleParam = req.body;
+    //delete permissions
+    delete roleParam.permissions;
+
+    //first save the role
+    var roleEntry = roleRepository.build(roleParam);
+    roleEntry.save().success(successSave).error(error);
 }
 
 module.exports.updateRoleByName = function(req, res) {
 
-    var success = function(success) {
-        res.status(200).json(success);
+    var success = function() {
+        res.status(200).json("OK");
     };
 
     var error = function(error) {
@@ -97,8 +122,8 @@ module.exports.updateRoleByName = function(req, res) {
 
 module.exports.deleteRoleByName = function(req, res) {
 
-    var success = function(success) {
-        res.status(200).json(success);
+    var success = function() {
+        res.status(200).json("OK");
     };
 
     var error = function(error) {
@@ -148,5 +173,5 @@ module.exports.setMultiplePermissionsToRole = function(req, res) {
     };
 
     var roleRepository = repositoryFactory.getRoleRepository();
-    roleRepository.setMultiplePermissionsToRole(req.params.role, req.body, success, error);
+    roleRepository.setMultiplePermissionsToRole(req.params.id, req.body, success, error);
 };

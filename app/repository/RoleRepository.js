@@ -96,7 +96,7 @@ module.exports = function(roleModel) {
         roleModel.getRoleByName(roleName, getSuccess, error);
     }
 
-    roleModel.setMultiplePermissionsToRole = function(roleName, permissionsArray, success, error) {
+    roleModel.setMultiplePermissionsToRole = function(roleId, permissionsArray, success, error) {
 
         var getSuccess = function(role) {
 
