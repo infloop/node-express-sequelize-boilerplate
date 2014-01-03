@@ -1,3 +1,5 @@
+var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
+
 /**
  * This module represents a repository for the table role
  * @param {Sequelize} roleModel the model created by sequelize
@@ -5,6 +7,8 @@
 module.exports = function(roleModel) {
 
     roleModel.createRole = function(jsonRole, permissionsIdList, success, error) {
+
+        var permissionRepository = repositoryFactory.getPermissionRepository();
 
         roleModel.create(jsonRole).success(function(createdRole) {
 

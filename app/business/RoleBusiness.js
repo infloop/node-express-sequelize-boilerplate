@@ -63,7 +63,6 @@ module.exports.getRole = function(req, res) {
 module.exports.create = function(req, res) {
 
     var roleRepository = repositoryFactory.getRoleRepository();
-    var permissionRepository = repositoryFactory.getPermissionRepository();
     
     // permissions id list.
     var permissionsList = req.body.permissions;
