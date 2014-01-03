@@ -70,7 +70,7 @@ module.exports.create = function(req, res) {
         var array = [];
 
         for(var i = 0; i < permissions.length; i++) {
-            var built = permissionRepository.build({id:  permissions[i]});
+            var built = permissionRepository.build({ id: permissions[i] });
             array.push(built);
         }
 
