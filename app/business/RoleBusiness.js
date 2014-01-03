@@ -103,6 +103,9 @@ module.exports.updateRole = function(req, res) {
         res.status(500).json(error);
     };
 
+    //set id
+    jsonRole.id = req.params.id;
+
     roleRepository.updateRole(jsonRole, permissionsList, success, error);
 }
 

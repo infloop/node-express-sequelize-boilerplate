@@ -1,4 +1,5 @@
 var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
+var logger = require("../../config/logger");
 
 /**
  * This module represents a repository for the table role
@@ -71,12 +72,15 @@ module.exports = function(roleModel) {
         roleModel.find({ where: { id: id } }).success(successFind).error(error);
     }
 
-    roleModel.updateRole = function(updatedRole, success, error) {
+    roleModel.updateRole = function(updatedRole, permissionsIdList, success, error) {
 
         var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
         var permissionRepository = repositoryFactory.getPermissionRepository();
 
-        roleModel.update(updatedRole, { id: updatedRole.id }).success(function(role) {
+        var builtRole = roleModel.build(updatedRole);
+        logger.info(builtRole.name);
+
+        roleModel.update(updatedRole, { id: updatedRole.id }).success(function() {
 
             var permissionsArray = [];
 
@@ -86,10 +90,10 @@ module.exports = function(roleModel) {
                 permissionsArray.push(built);
             }
 
-            role.setPermissions(permissionsArray).success(function() {
+            builtRole.setPermissions(permissionsArray).success(function() {
 
-                role.permissions = permissionsArray;
-                success(role);
+                builtRole.permissions = permissionsArray;
+                success(builtRole);
 
             }).error(error);
         });
