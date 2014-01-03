@@ -14,10 +14,17 @@ var constants = require("../../config/constants");
 module.exports = function (app, passport) {
 
 	app.all('*', function(req, res, next) {
-	  res.header("Access-Control-Allow-Origin", "*");
-	  res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
-	  res.header("Access-Control-Allow-Headers", "X-Requested-With, "+constants.tokenHeader);
-	  next();
+		res.header("Access-Control-Allow-Origin", "*");
+		res.header("Access-Control-Allow-Methods", "GET, POST, PUT, DELETE, OPTIONS");
+		res.header("Access-Control-Allow-Headers", "X-Requested-With, "+constants.tokenHeader);
+
+		if (req.method === 'OPTIONS') {
+		      res.writeHead(200, headers);
+		      res.end();
+		}else{
+			next();
+		}
+	  
 	});
 
 	publicRoutes(app, passport);
