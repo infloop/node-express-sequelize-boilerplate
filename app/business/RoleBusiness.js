@@ -73,7 +73,7 @@ module.exports.create = function(req, res) {
     delete jsonRole.permissions;
 
     var success = function(createRole) {
-        res.status(200).json(roleResource.build(createRole));
+        res.status(201).json(roleResource.build(createRole));
     };
 
     var error = function(error) {

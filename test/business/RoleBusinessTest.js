@@ -173,54 +173,25 @@ describe('RoleBusiness', function () {
              */
             var mocks = function() {
 
-                //mock getRepository function (i.e. the repository). This way, we do not need the database connection
-                roleBusiness.__set__(
+                roleBusiness.__set__("repositoryFactory", {
 
-                    "repositoryFactory", {
-
-                    getRoleRepository: function(req) {
+                    getRoleRepository: function() {
 
                         return {
+                            createRole: function(jsonRole, permissionsList, success, error) {
 
-                            build:function(req) {
-
-                                var result = {
-
-                                    save: function() {
-
-                                        return result;
-                                    },
-
-                                    success: function(success) {
-
-                                        success(expectedResult);
-                                        return result;
-                                    }, 
-
-                                    error: function(error) {
-
-                                        return result;
-                                    }
-                                }
-
-                                return result;
-                            }
-                        }
-
-                        return roleRepository;
-                    },
-
-                    getPermissionRepository: function() {
-
-                        return {
-
-                            build: function(permission) {
-                                return "{}";
+                                success(success);
                             }
                         }
                     }
                 });
 
+                roleBusiness.__set__("roleResource" , {
+
+                    build: function(role) {
+                        return expectedResult;
+                    }
+                });
             };
 
             //set up mocks
