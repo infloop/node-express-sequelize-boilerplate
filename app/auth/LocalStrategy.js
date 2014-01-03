@@ -1,6 +1,6 @@
 var logger = require("../../config/logger");
 var LocalStrategy = require('passport-local').Strategy;
-var repositoryFactory = require("../repository/RepositoryFactory");
+var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
 var constants = require("../../config/constants");
 
 

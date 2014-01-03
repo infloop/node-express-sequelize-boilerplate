@@ -15,17 +15,18 @@ module.exports.getAllPermissions = function(req, res) {
     var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
 
     var success = function(permissions) {
-        permissions.offset = offset;
-        permissions.limit = limit;
-        res.status(200).json(permissionResource.buildList(permissions));
+        if(permissions){
+            permissions.offset = offset;
+            permissions.limit = limit;
+            res.status(200).json(permissionResource.buildList(permissions));    
+            return;
+        }
+        res.status(404).json("Not found");    
     }
 
     var error = function(err){
         res.status(500).json(err);
     }
-
-    var offset = (req.param('offset') > 0 ? req.param('offset') : 1) - 1;
-    var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
 
     var options = {
 

@@ -15,6 +15,9 @@ module.exports = function (app, passport) {
 
     // Get all roles.
     app.get(routes.roles, roleBusiness.all);
+
+    // Get a role with its permissions
+    app.get(routes.specificRole, roleBusiness.getRole);
     
     // Create a new role.
     app.post(routes.roles, roleBusiness.create);

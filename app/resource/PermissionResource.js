@@ -32,7 +32,6 @@ module.exports.buildList = function(permissionModels){
 
 			for(var i = 0; i < rows.length; i++) {
 				var builtPermission = module.exports.build(rows[i]);
-				logger.debug(builtPermission);
 				array.push(builtPermission);
 			}
 

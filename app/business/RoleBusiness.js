@@ -2,6 +2,8 @@ var logger = require("../../config/logger");
 var constants = require("../../config/constants");
 var repositoryFactory = require("../repository/RepositoryFactory").getRepositoryFactory();
 
+var roleResource = require("../resource/RoleResource");
+
 /**
  * This method returns (in the response) all roles
  */
@@ -9,16 +11,24 @@ module.exports.all = function(req, res) {
 
     var roleRepository = repositoryFactory.getRoleRepository();
 
+    var offset = (req.param('offset') > 0 ? req.param('offset') : 1) - 1;
+    var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
+
     var success = function(roles){
-        res.status(200).json(roles);
+        if(roles){
+            roles.offset = offset;
+            roles.limit = limit;
+            res.status(200).json(roleResource.buildList(roles));    
+            return;
+        }
+
+        res.status(404).json("Not found");
+        
     }
 
     var error = function(err){
         res.status(500).json(err);
     }
-
-    var offset = (req.param('offset') > 0 ? req.param('offset') : 1) - 1;
-    var limit = (req.param('limit') > 0 ? req.param('limit') : constants.limit);
 
     var options = {
 
@@ -27,6 +37,24 @@ module.exports.all = function(req, res) {
     }
 
     roleRepository.getAllRoles(options, success, error);
+}
+
+module.exports.getRole = function(req, res) {
+
+    var success = function(role) {
+        if(role){
+            res.status(200).json(roleResource.buildList(role));    
+            return;
+        }
+        res.status(404).json("Not found");
+    };
+
+    var error = function(error) {
+        res.status(500).json(error);
+    };
+
+    var roleRepository = repositoryFactory.getRoleRepository();
+    roleRepository.getRoleById(req.params.id, success, error);
 }
 
 /*
