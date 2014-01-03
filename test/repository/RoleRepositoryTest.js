@@ -9,6 +9,9 @@ var sequelize;
 describe('RoleRepository', function () {
 
     var error = function(err) {
+
+        logger.warn('Error!!!!!!!!!!!!!!!!!!');
+        logger.warn(err);
         throw err;
     };
 
@@ -47,28 +50,40 @@ describe('RoleRepository', function () {
             callback(createdPermissions);
         };
 
-        permissionRepository.create(permissionsArray).success(success).error(error);
+        permissionRepository.bulkCreate(permissionsArray).success(success).error(error);
     };
 
     var createRolesAndPermissions = function(numberOfPermissionsPerRole, callback) {
 
         var role = {
-
             name: 'admin'
         };
 
         roleRepository.create(role).success(function(createdRole) {
 
-            var permissionsSuccess = function(createdPermissions) {
+            var k = 0;
 
-                var success = function(result) {
-                    callback(result);
+            for (var i = 0; i < numberOfPermissionsPerRole; i++) {
+
+                var permission = {
+
+                    name: 'prueba' + i,
+                    httpVerb: 'verb' + i,
+                    uri: '/api/resource-x/' + i
                 };
+                
+                permissionRepository.create(permission).success(function(createdPermission) {
 
-                createdRole.setPermissions(createdPermissions).success(success).error(error);
-            };
+                    createdRole.addPermission(createdPermission).success(function() {
 
-            createPermissions(numberOfPermissionsPerRole, permissionsSuccess);
+                        k++;
+
+                        if (k == (numberOfPermissionsPerRole - 1)) {
+                            callback();
+                        }
+                    });
+                });
+            }
         });
     };
 
@@ -203,7 +218,7 @@ describe('RoleRepository', function () {
             var updatedRole = {
 
                 'name' : updatedRoleName,
-            }
+            };
 
             //this is the callback function that gets exectuted after creating example data in db
             var updateByRolename = function() {
@@ -291,10 +306,6 @@ describe('RoleRepository', function () {
             roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
             permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
 
-            var error = function(error) {
-                error(error);
-            };
-
             // Create roles table
             roleRepository.sync({force: true}).success(function(){
 
@@ -310,10 +321,6 @@ describe('RoleRepository', function () {
 
         it('should return the permissions of the given role', function (done) {
 
-            var error = function(error) {
-                error(error);
-            };
-
             var numberOfPermissions = 3;
             var roleName = 'admin';
 
@@ -321,10 +328,10 @@ describe('RoleRepository', function () {
 
                 var findSuccess = function(permissionsArray) {
 
-                    permissionsArray.length.should.equal(1);
+                    permissionsArray.length.should.equal(numberOfPermissions);
 
                     var permissionOne = permissionsArray[0];
-                    permissionOne.name.should.equal('prueba1');
+                    permissionOne.name.should.equal('prueba0');
 
                     done();
                 };
@@ -349,48 +356,42 @@ describe('RoleRepository', function () {
             // Create roles table
             roleRepository.sync({force: true}).success(function(){
 
-            }).error(function(error) {
-                throw error;
-            });
+            }).error(error);
 
             // Create permissions table
             permissionRepository.sync({force: true}).success(function(){
 
-                // done();
+                done();
 
             }).error(error);
         });
 
-        it('should delete the role matching the given name and its relations in the permissionsroles table.', function (done) {
+        it('should return the permissions of the given role', function (done) {
 
-            var error = function(error) {
-                error(error);
-            };
-
+            var numberOfPermissions = 3;
             var roleName = 'admin';
 
-            var deleteRoleCallback = function() {
+            var findRolePermissions = function() {
 
-                var deleteSuccess = function(result) {
+                var deleteSuccess = function() {
 
-                    /*
+                    var success = function() {
 
-                       permissionsArray.length.should.equal(1);
+                        throw "shouldn't be here because there is no role with name admin."
+                    };
 
-                       var permissionOne = permissionsArray[0];
-                       permissionOne.name.should.equal('prueba1');
-                       */
+                    var deleteError = function(error) {
+                        // Expect to be here because there is no role with name admin
+                        done();
+                    }
 
-                    logger.warn("************* 1");
-                    logger.warn(result);
-
-                    done();
+                    roleRepository.getRolePermissions(roleName, success, deleteError);
                 };
 
                 roleRepository.deleteRoleByName(roleName, deleteSuccess, error);
             };
 
-            createRolesAndPermissions(deleteRoleCallback);
+            createRolesAndPermissions(numberOfPermissions, findRolePermissions);
         });
     });
 });

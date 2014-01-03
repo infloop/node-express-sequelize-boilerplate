@@ -15,7 +15,6 @@ module.exports = function(permissionModel) {
      * Get a permission given its name.
      */
     permissionModel.getPermissionByName = function(permissionName, success, error) {
-        // update(updated entity, where clause)
         permissionModel.find({ where: { name: permissionName } }).success(success).error(error);
     }
 
@@ -23,7 +22,6 @@ module.exports = function(permissionModel) {
      * Get a permission given its id.
      */
     permissionModel.getPermissionById = function(id, success, error) {
-        // update(updated entity, where clause)
         permissionModel.find({ where: { id: id } }).success(success).error(error);
     }
 
