@@ -260,7 +260,8 @@ describe('PermissionRepository', function () {
 
             //connect to in-memory database
             permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
-            roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            roleRepository = require("../../app/repository/RoleRepository");
+            roleRepository.init(sequelize.Role);
 
             var error = function(error) {
                 throw error;
@@ -274,7 +275,7 @@ describe('PermissionRepository', function () {
                 };
 
                 // Create table
-                roleRepository.sync({force: true}).success(roleSyncSuccess).error(error);
+                roleRepository.getModel().sync({force: true}).success(roleSyncSuccess).error(error);
             };
 
             // Create table
@@ -319,7 +320,7 @@ describe('PermissionRepository', function () {
                     .success(permissionCreteSuccess).error(error);
                 }
 
-                var roleEntry = roleRepository.create({ 'name' : rolename })
+                var roleEntry = roleRepository.getModel().create({ 'name' : rolename })
                 .success(createRoleSuccess).error(error);
 
             };

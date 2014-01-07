@@ -20,7 +20,7 @@ module.exports.getRepositoryFactory = function() {
         },
 
         getRoleRepository: function() {
-            return require("../repository/RoleRepository")(appReference.get("models").Role);
+            return require("../repository/RoleRepository").init(appReference.get("models").Role);
         },
 
         getPermissionRepository: function() {

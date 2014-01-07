@@ -3,92 +3,100 @@ var logger = require("../../config/logger");
 
 /**
  * This module represents a repository for the table role
- * @param {Sequelize} roleModel the model created by sequelize
+ * @param {Sequelize} roleModelReference the model created by sequelize
  */
-module.exports = function(roleModel) {
+var roleModelReference;
 
-    roleModel.createRole = function(jsonRole, permissionsIdList, success, error) {
-        
-        var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
-        var permissionRepository = repositoryFactory.getPermissionRepository();
+module.exports.init = function(roleModel) {
 
-        var permissionRepository = repositoryFactory.getPermissionRepository();
+    roleModelReference = roleModel;
+    return this;
+}
 
-        roleModel.create(jsonRole).success(function(createdRole) {
+module.exports.getModel = function() {
 
-            var permissionsArray = [];
+    return roleModelReference;
+}
 
-            for(var i = 0; i < permissionsIdList.length; i++) {
+module.exports.createRole = function(jsonRole, permissionsIdList, success, error) {
 
-                var built = permissionRepository.build({ id: permissionsIdList[i] });
-                permissionsArray.push(built);
-            }
+    var permissionRepository = repositoryFactory.getPermissionRepository();
 
-            createdRole.setPermissions(permissionsArray).success(function() {
+    roleModelReference.create(jsonRole).success(function(createdRole) {
 
-                createdRole.permissions = permissionsArray;
-                success(createdRole);
+        var permissionsArray = [];
 
-            }).error(error);
-        });
-    };
+        for(var i = 0; i < permissionsIdList.length; i++) {
 
-    /**
-     * finds all results of the roles table according to the params offset and limit
-     */
-    roleModel.getAllRoles = function(options, success, error) {
-        roleModel.findAndCountAll({offset: options.offset, limit: options.limit}).success(success).error(error);
-    }
-
-    /**
-     * Get role by name
-     */
-    roleModel.getRoleByName = function(roleName, success, error) {
-
-        roleModel.find({ where: { name: roleName } }).success(success).error(error);
-    }
-
-    /**
-     * Get role by name
-     */
-    roleModel.getRoleById = function(id, success, error) {
-
-        var successFind = function(role){
-            if(role){
-                var successPermissions = function(permissions){
-                    if(permissions){
-                        role.permissions = permissions;
-                    }
-                    success(role);
-                }
-
-                role.getPermissions().success(successPermissions).error(error);    
-            }else{
-                success(false);
-            }
-
+            var built = permissionRepository.build({ id: permissionsIdList[i] });
+            permissionsArray.push(built);
         }
 
-        roleModel.find({ where: { id: id } }).success(successFind).error(error);
-    }
+        createdRole.setPermissions(permissionsArray).success(function() {
 
-    roleModel.updateRole = function(updatedRole, permissionsIdList, success, error) {
+            createdRole.permissions = permissionsArray;
+            success(createdRole);
 
-        var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
-        var permissionRepository = repositoryFactory.getPermissionRepository();
+        }).error(error);
+    });
+};
 
-        roleModel.update(updatedRole, { id: updatedRole.id }).success(function() {
+/**
+ * finds all results of the roles table according to the params offset and limit
+ */
+module.exports.getAllRoles = function(options, success, error) {
+    roleModelReference.findAndCountAll({offset: options.offset, limit: options.limit}).success(success).error(error);
+}
 
-            var permissionsArray = [];
+/**
+ * Get role by name
+ */
+module.exports.getRoleByName = function(roleName, success, error) {
+    roleModelReference.find({ where: { name: roleName } }).success(success).error(error);
+}
 
-            for(var i = 0; i < permissionsIdList.length; i++) {
+/**
+ * Get role by name
+ */
+module.exports.getRoleById = function(id, success, error) {
 
-                var built = permissionRepository.build({ id: permissionsIdList[i] });
-                permissionsArray.push(built);
+    var successFind = function(role){
+        if(role){
+            var successPermissions = function(permissions){
+                if(permissions){
+                    role.permissions = permissions;
+                }
+                success(role);
             }
 
-            var builtRole = roleModel.build(updatedRole);
-            logger.info(builtRole.name);
+            role.getPermissions().success(successPermissions).error(error);    
+        }else{
+            success(false);
+        }
+
+    }
+
+    roleModelReference.find({ where: { id: id } }).success(successFind).error(error);
+}
+
+module.exports.updateRole = function(updatedRole, permissionsIdList, success, error) {
+
+    var permissionRepository = repositoryFactory.getPermissionRepository();
+
+    roleModelReference.update(updatedRole, { id: updatedRole.id }).success(function() {
+
+        var permissionsArray = [];
+
+        for(var i = 0; i < permissionsIdList.length; i++) {
+
+            var built = permissionRepository.build({ id: permissionsIdList[i] });
+            permissionsArray.push(built);
+        }
+
+        var builtRole = roleModelReference.build(updatedRole);
+        logger.info(builtRole.name);
+
+        builtRole.setPermissions([]).success(function() {
 
             builtRole.setPermissions(permissionsArray).success(function() {
 
@@ -96,81 +104,82 @@ module.exports = function(roleModel) {
                 success(builtRole);
 
             }).error(error);
+        }).error(error);
+    });
+}
+
+module.exports.deleteRole = function(id, success, error) {
+
+    // Remove the permissions associated with the role.
+
+    var getSuccess = function(role) {
+
+        if (role) {
+
+            role.setPermissions([]).success(function() {
+                roleModelReference.destroy({ id: id }).success(success).error(error);
+            });
+
+        } else {
+            error("No hay un rol con ID: " + id);
+        }
+    };
+
+    this.getRoleById(id, getSuccess, error);
+}
+
+module.exports.getRolePermissionsById = function(id, success, error) {
+
+    var getRoleSuccess = function(role) {
+
+        if (role) {
+            role.getPermissions().success(success).error(error);
+        } else {
+            error("No hay un rol con ID: " + id);
+        }
+    };
+
+    this.getRoleById(id, getRoleSuccess, error);
+}
+
+module.exports.getRolePermissions = function(roleName, success, error) {
+
+    var getRoleSuccess = function(role) {
+
+        if (role) {
+            role.getPermissions().success(success).error(error);
+        } else {
+            error("No hay un rol con nombre: " + roleName);
+        }
+    };
+
+    this.getRoleByName(roleName, getRoleSuccess, error);
+}
+
+module.exports.addPermissionToRole = function(roleName, jsonPermission, success, error) {
+
+    var getSuccess = function(role) {
+
+        var permissionRepository = repositoryFactory.getPermissionRepository();
+
+        permissionRepository.create(jsonPermission).success(function(permission) {
+            role.addPermission(permission).success(success).error(error);
         });
-    }
+    };
 
-    roleModel.deleteRole = function(id, success, error) {
+    roleModelReference.getRoleByName(roleName, getSuccess, error);
+}
 
-        // Remove the permissions associated with the role.
+module.exports.setMultiplePermissionsToRole = function(roleId, permissionsArray, success, error) {
 
-        var getSuccess = function(role) {
+    var getSuccess = function(role) {
 
-            role.setPermissions([]).success(function(successResult) {
+        var permissionRepository = repositoryFactory.getPermissionRepository();
 
-                roleModel.destroy({ id: id }).success(success).error(error);
-            });
-        };
+        permissionRepository.bulkCreate(permissionsArray).success(function(permissions) {
+            role.setPermissions(permissions).success(success).error(error);
+        });
+    };
 
-        this.getRoleById(id, getSuccess, error);
-    }
-
-    roleModel.getRolePermissionsById = function(id, success, error) {
-
-        var getRoleSuccess = function(role) {
-
-            if (role) {
-                role.getPermissions().success(success).error(error);
-            } else {
-                error("No hay un rol con ID: " + id);
-            }
-        };
-
-        roleModel.getRoleById(id, getRoleSuccess, error);
-    }
-
-    roleModel.getRolePermissions = function(roleName, success, error) {
-
-        var getRoleSuccess = function(role) {
-
-            if (role) {
-                role.getPermissions().success(success).error(error);
-            } else {
-                error("No hay un rol con nombre: " + roleName);
-            }
-        };
-
-        roleModel.getRoleByName(roleName, getRoleSuccess, error);
-    }
-
-    roleModel.addPermissionToRole = function(roleName, jsonPermission, success, error) {
-
-        var getSuccess = function(role) {
-
-            var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
-            var permissionRepository = repositoryFactory.getPermissionRepository();
-
-            permissionRepository.create(jsonPermission).success(function(permission) {
-                role.addPermission(permission).success(success).error(error);
-            });
-        };
-
-        roleModel.getRoleByName(roleName, getSuccess, error);
-    }
-
-    roleModel.setMultiplePermissionsToRole = function(roleId, permissionsArray, success, error) {
-
-        var getSuccess = function(role) {
-
-            var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
-            var permissionRepository = repositoryFactory.getPermissionRepository();
-
-            permissionRepository.bulkCreate(permissionsArray).success(function(permissions) {
-                role.setPermissions(permissions).success(success).error(error);
-            });
-        };
-
-        roleModel.getRoleByName(roleName, getSuccess, error);
-    }
-
-    return roleModel;
-};
+    roleModelReference.getRoleByName(roleName, getSuccess, error);
+}
