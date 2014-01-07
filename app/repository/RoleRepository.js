@@ -14,7 +14,6 @@ module.exports.init = function(roleModel) {
 }
 
 module.exports.getModel = function() {
-
     return roleModelReference;
 }
 

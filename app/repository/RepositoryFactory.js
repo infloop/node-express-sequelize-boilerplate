@@ -12,7 +12,7 @@ module.exports.getRepositoryFactory = function() {
     var repositoryFactory = {
 
         getSequelizeRepository: function() {
-            return require("../repository/SequelizeRepository")(appReference.get("models").sequelize);
+            return require("../repository/SequelizeRepository").init(appReference.get("models").sequelize);
         },
 
         getUserRepository: function() {
@@ -24,7 +24,7 @@ module.exports.getRepositoryFactory = function() {
         },
 
         getPermissionRepository: function() {
-            return require("../repository/PermissionRepository")(appReference.get("models").Permission);
+            return require("../repository/PermissionRepository").init(appReference.get("models").Permission);
         },
 
         getUserTokenRepository: function() {
