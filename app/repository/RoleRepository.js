@@ -9,9 +9,6 @@ module.exports = function(roleModel) {
 
     roleModel.createRole = function(jsonRole, permissionsIdList, success, error) {
 
-        var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
-        var permissionRepository = repositoryFactory.getPermissionRepository();
-
         var permissionRepository = repositoryFactory.getPermissionRepository();
 
         roleModel.create(jsonRole).success(function(createdRole) {
@@ -74,7 +71,6 @@ module.exports = function(roleModel) {
 
     roleModel.updateRole = function(updatedRole, permissionsIdList, success, error) {
 
-        var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
         var permissionRepository = repositoryFactory.getPermissionRepository();
 
         roleModel.update(updatedRole, { id: updatedRole.id }).success(function() {
@@ -90,11 +86,14 @@ module.exports = function(roleModel) {
             var builtRole = roleModel.build(updatedRole);
             logger.info(builtRole.name);
 
-            builtRole.setPermissions(permissionsArray).success(function() {
+            builtRole.setPermissions([]).success(function() {
 
-                builtRole.permissions = permissionsArray;
-                success(builtRole);
+                builtRole.setPermissions(permissionsArray).success(function() {
 
+                    builtRole.permissions = permissionsArray;
+                    success(builtRole);
+
+                }).error(error);
             }).error(error);
         });
     }
@@ -151,7 +150,6 @@ module.exports = function(roleModel) {
 
         var getSuccess = function(role) {
 
-            var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
             var permissionRepository = repositoryFactory.getPermissionRepository();
 
             permissionRepository.create(jsonPermission).success(function(permission) {
@@ -166,7 +164,6 @@ module.exports = function(roleModel) {
 
         var getSuccess = function(role) {
 
-            var repositoryFactory = require("./RepositoryFactory").getRepositoryFactory();
             var permissionRepository = repositoryFactory.getPermissionRepository();
 
             permissionRepository.bulkCreate(permissionsArray).success(function(permissions) {

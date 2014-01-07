@@ -1,4 +1,5 @@
 var logger = require("../../config/logger");
+var rewire = require("rewire");
 var should = require('should');
 
 var roleRepository;
@@ -199,14 +200,19 @@ describe('RoleRepository', function () {
 
             //connect to in-memory database
             roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
 
-            //create table
-            roleRepository.sync({force: true}).success(function() {
-
-                done();	
+            // Create roles table
+            roleRepository.sync({force: true}).success(function(){
 
             }).error(error);
 
+            // Create permissions table
+            permissionRepository.sync({force: true}).success(function(){
+
+                done();
+
+            }).error(error);
         });
 
         it('should update a role', function (done) {
@@ -221,6 +227,22 @@ describe('RoleRepository', function () {
                 id: roleId,
                 name: updatedRoleName,
             };
+
+
+            roleRepository = rewire("../../app/repository/RoleRepository");
+
+            var mocks = function() {
+
+                roleRepository.__set__('repositoryFactory', {
+
+                    getPermissionRepository: function() {
+
+                        return permissionRepository;
+                    }
+                });
+            };
+
+            mocks();
 
             //this is the callback function that gets exectuted after creating example data in db
             var updateByRoleCallback = function() {
