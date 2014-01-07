@@ -28,7 +28,7 @@ describe('RoleRepository', function () {
             cb();
         };
 
-        roleRepository.bulkCreate(arrayObjs).success(success).error(error);
+        roleRepository.getModel().bulkCreate(arrayObjs).success(success).error(error);
     };
 
     var createPermissions = function(numberOfPermissions, callback) {
@@ -60,7 +60,7 @@ describe('RoleRepository', function () {
             name: 'admin'
         };
 
-        roleRepository.create(role).success(function(createdRole) {
+        roleRepository.getModel().create(role).success(function(createdRole) {
 
             var k = 0;
 
@@ -95,10 +95,11 @@ describe('RoleRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            roleRepository = require("../../app/repository/RoleRepository")
+            roleRepository.init(sequelize.Role);
 
             //create table
-            roleRepository.sync({force: true}).success(function() {
+            roleRepository.getModel().sync({force: true}).success(function() {
 
                 done();	
 
@@ -152,10 +153,11 @@ describe('RoleRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            roleRepository = require("../../app/repository/RoleRepository")
+            roleRepository.init(sequelize.Role);
 
             //create table
-            roleRepository.sync({force: true}).success(function(){
+            roleRepository.getModel().sync({force: true}).success(function(){
 
                 done();	
 
@@ -199,11 +201,13 @@ describe('RoleRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            roleRepository = require("../../app/repository/RoleRepository")
+            roleRepository.init(sequelize.Role);
+
             permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
 
             // Create roles table
-            roleRepository.sync({force: true}).success(function(){
+            roleRepository.getModel().sync({force: true}).success(function(){
 
             }).error(error);
 
@@ -228,12 +232,11 @@ describe('RoleRepository', function () {
                 name: updatedRoleName,
             };
 
-
             roleRepository = rewire("../../app/repository/RoleRepository");
 
             var mocks = function() {
 
-                roleRepository.__set__('repositoryFactory', {
+                roleRepository.__set__("repositoryFactory", {
 
                     getPermissionRepository: function() {
 
@@ -263,6 +266,7 @@ describe('RoleRepository', function () {
                         throw error;
                     };
 
+                    roleRepository.init(sequelize.Role);
                     roleRepository.getRoleById(roleId, findSuccess, findError);
                 }
 
@@ -285,11 +289,13 @@ describe('RoleRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            roleRepository = require("../../app/repository/RoleRepository")
+            roleRepository.init(sequelize.Role);
+
             permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
 
             // Create roles table
-            roleRepository.sync({force: true}).success(function(){
+            roleRepository.getModel().sync({force: true}).success(function(){
 
             }).error(error);
 
@@ -311,7 +317,7 @@ describe('RoleRepository', function () {
 
                 var success = function(success) {
 
-                    roleRepository.count().success(function(result) {
+                    roleRepository.getModel().count().success(function(result) {
 
                         result.should.equal(totalRegisters - 1);
                         done();
@@ -366,11 +372,13 @@ describe('RoleRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            roleRepository = require("../../app/repository/RoleRepository")(sequelize.Role);
+            roleRepository = require("../../app/repository/RoleRepository")
+            roleRepository.init(sequelize.Role);
+
             permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
 
             // Create roles table
-            roleRepository.sync({force: true}).success(function(){
+            roleRepository.getModel().sync({force: true}).success(function(){
 
             }).error(error);
 
