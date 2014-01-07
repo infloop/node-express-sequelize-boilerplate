@@ -46,7 +46,7 @@ var error403 = function(res, error) {
  */
 exports.requiresLoginAndRedirect = function(req, res, next) {
 
-    var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
+    var userTokenRepository = repositoryFactory.getUserTokenRepository();
 
     //get the cookie
     var cookie = req.signedCookies[config.app.cookieName];
@@ -104,7 +104,7 @@ exports.getTokenType = function(req){
  */
 exports.requiresLogin = function(req, res, next) {
 
-    var userTokenRepository = repositoryFactory.getUserTokenRepository(req.app);
+    var userTokenRepository = repositoryFactory.getUserTokenRepository();
 
     //get the token
     var cookie = getTokenFromRequest2(req);
@@ -223,7 +223,7 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
 
         if (roleResult) {
 
-            var roleRepository = repositoryFactory.getRoleRepository(req.app);
+            var roleRepository = repositoryFactory.getRoleRepository();
             roleRepository.getRolePermissions(roleResult.name, permissionSuccess, permissionError);
 
         } else {
@@ -249,7 +249,7 @@ exports.checkIsAuthorizedToAccess = function(req, res, next) {
     } else {
         
         // If the requested resource is not public the it check if the user is authorized to access it.
-        var sequelizeRepository = repositoryFactory.getSequelizeRepository(req.app);
+        var sequelizeRepository = repositoryFactory.getSequelizeRepository();
         sequelizeRepository.findRoleByToken(token, roleSuccess, roleError);
     }
 }

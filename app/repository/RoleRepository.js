@@ -10,6 +10,7 @@ var roleModelReference;
 module.exports.init = function(roleModel) {
 
     roleModelReference = roleModel;
+    return this;
 }
 
 module.exports.getModel = function() {

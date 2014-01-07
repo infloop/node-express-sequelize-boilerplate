@@ -232,7 +232,10 @@ describe('RoleRepository', function () {
                 name: updatedRoleName,
             };
 
+            var permissionsIdList = [1, 2, 3, 4];
+
             roleRepository = rewire("../../app/repository/RoleRepository");
+            roleRepository.init(sequelize.Role);
 
             var mocks = function() {
 
@@ -250,11 +253,7 @@ describe('RoleRepository', function () {
             //this is the callback function that gets exectuted after creating example data in db
             var updateByRoleCallback = function() {
 
-                logger.warn("********************* 1");
-
                 var success = function(success) {
-
-                    logger.warn("********************* 2");
 
                     var findSuccess = function(result) {
 
@@ -263,22 +262,25 @@ describe('RoleRepository', function () {
                     };
 
                     var findError = function(error) {
+                        logger.warn('********************** 1');
+                        logger.warn(error);
                         throw error;
                     };
 
-                    roleRepository.init(sequelize.Role);
                     roleRepository.getRoleById(roleId, findSuccess, findError);
                 }
 
                 var error = function(err) {
+                    logger.warn('********************** 2');
+                    logger.warn(err)
                     throw err;
                 }
 
-                roleRepository.updateRole(updatedRole, success, error);
+                roleRepository.updateRole(updatedRole, permissionsIdList, success, error);
             };
 
             //first create some example roles
-            createRoles(totalRegisters, updateByRoleCallback);
+            createRolesAndPermissions(totalRegisters, updateByRoleCallback);
         });
     });
 
