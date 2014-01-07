@@ -5,7 +5,7 @@
 
 var permissionModelReference;
 
-module.exports.init(permissionModel) {
+module.exports.init = function(permissionModel) {
 
     permissionModelReference = permissionModel;
     return this;

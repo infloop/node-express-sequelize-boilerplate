@@ -73,7 +73,7 @@ describe('RoleRepository', function () {
                     uri: '/api/resource-x/' + i
                 };
                 
-                permissionRepository.create(permission).success(function(createdPermission) {
+                permissionRepository.getModel().create(permission).success(function(createdPermission) {
 
                     createdRole.addPermission(createdPermission).success(function() {
 
@@ -204,7 +204,7 @@ describe('RoleRepository', function () {
             roleRepository = require("../../app/repository/RoleRepository")
             roleRepository.init(sequelize.Role);
 
-            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+            permissionRepository = require("../../app/repository/PermissionRepository").init(sequelize.Permission);
 
             // Create roles table
             roleRepository.getModel().sync({force: true}).success(function(){
@@ -212,7 +212,7 @@ describe('RoleRepository', function () {
             }).error(error);
 
             // Create permissions table
-            permissionRepository.sync({force: true}).success(function(){
+            permissionRepository.getModel().sync({force: true}).success(function(){
 
                 done();
 
@@ -294,7 +294,7 @@ describe('RoleRepository', function () {
             roleRepository = require("../../app/repository/RoleRepository")
             roleRepository.init(sequelize.Role);
 
-            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+            permissionRepository = require("../../app/repository/PermissionRepository").init(sequelize.Permission);
 
             // Create roles table
             roleRepository.getModel().sync({force: true}).success(function(){
@@ -302,7 +302,7 @@ describe('RoleRepository', function () {
             }).error(error);
 
             // Create permissions table
-            permissionRepository.sync({force: true}).success(function(){
+            permissionRepository.getModel().sync({force: true}).success(function(){
 
                 done();
 
@@ -377,7 +377,7 @@ describe('RoleRepository', function () {
             roleRepository = require("../../app/repository/RoleRepository")
             roleRepository.init(sequelize.Role);
 
-            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+            permissionRepository = require("../../app/repository/PermissionRepository").init(sequelize.Permission);
 
             // Create roles table
             roleRepository.getModel().sync({force: true}).success(function(){
@@ -385,7 +385,7 @@ describe('RoleRepository', function () {
             }).error(error);
 
             // Create permissions table
-            permissionRepository.sync({force: true}).success(function(){
+            permissionRepository.getModel().sync({force: true}).success(function(){
 
                 done();
 

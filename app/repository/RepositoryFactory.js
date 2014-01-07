@@ -16,7 +16,7 @@ module.exports.getRepositoryFactory = function() {
         },
 
         getUserRepository: function() {
-            return require("../repository/UserRepository")(appReference.get("models").User);
+            return require("../repository/UserRepository").init(appReference.get("models").User);
         },
 
         getRoleRepository: function() {
@@ -28,7 +28,7 @@ module.exports.getRepositoryFactory = function() {
         },
 
         getUserTokenRepository: function() {
-            return require("../repository/UserTokenRepository")(appReference.get("models").UserToken);
+            return require("../repository/UserTokenRepository").init(appReference.get("models").UserToken);
         }
     };
 

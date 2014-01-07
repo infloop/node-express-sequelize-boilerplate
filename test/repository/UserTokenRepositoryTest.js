@@ -7,13 +7,13 @@ var sequelize;
 
 describe('UserToken Repository', function () {
 
-	var createUserTokens = function(total, cb){
+	var createUserTokens = function(total, cb) {
+        
 		var arrayObjs = [];
 
 		for(var i = 0; i < total ; i++){
 			arrayObjs.push({userId: i, token: "prueba"+i});
 		}
-
 
 		var success = function(){
 			cb();
@@ -23,7 +23,7 @@ describe('UserToken Repository', function () {
 			throw err;
 		}
 
-		userTokenRepository.bulkCreate(arrayObjs).success(success).error(error);
+		userTokenRepository.getModel().bulkCreate(arrayObjs).success(success).error(error);
 	}
 
 
@@ -34,10 +34,10 @@ describe('UserToken Repository', function () {
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userTokenRepository = require("../../app/repository/UserTokenRepository")(sequelize.UserToken);
+			userTokenRepository = require("../../app/repository/UserTokenRepository").init(sequelize.UserToken);
 			
 			//create table
-			userTokenRepository.sync({force: true}).success(function(){
+			userTokenRepository.getModel().sync({force: true}).success(function(){
 				
 				done();	
 
@@ -74,14 +74,11 @@ describe('UserToken Repository', function () {
 					throw err;
 				}
 
-
-
 				userTokenRepository.findByToken(token, success, error);
 			};
 
 			//first create some example users
 			createUserTokens(totalRegisters, find);
-			
 		});
 
 		it('should not find any token', function (done) {
@@ -119,10 +116,10 @@ describe('UserToken Repository', function () {
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userTokenRepository = require("../../app/repository/UserTokenRepository")(sequelize.UserToken);
+			userTokenRepository = require("../../app/repository/UserTokenRepository").init(sequelize.UserToken);
 			
 			//create table
-			userTokenRepository.sync({force: true}).success(function(){
+			userTokenRepository.getModel().sync({force: true}).success(function(){
 				
 				done();	
 

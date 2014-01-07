@@ -74,7 +74,7 @@ module.exports.createTokenForUser = function(userId, type, success, error){
     }
 
     //first delete all other tokens of the same type
-    userTokenModelReference.deleteAllTokensSameType(userId, type, successDelete);
+    this.deleteAllTokensSameType(userId, type, successDelete);
 }
 
 module.exports.deleteAllTokensSameType = function(userId, type, success, error){
