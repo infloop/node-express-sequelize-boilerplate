@@ -29,7 +29,7 @@ describe('PermissionRepository', function () {
             throw err;
         };
 
-        permissionRepository.bulkCreate(arrayObjs).success(success).error(error);
+        permissionRepository.getModel().bulkCreate(arrayObjs).success(success).error(error);
     }
 
     describe('getAllPermissions method', function () {
@@ -39,10 +39,10 @@ describe('PermissionRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+            permissionRepository = require("../../app/repository/PermissionRepository").init(sequelize.Permission);
 
             //create table
-            permissionRepository.sync({force: true}).success(function() {
+            permissionRepository.getModel().sync({force: true}).success(function() {
 
                 done();	
 
@@ -101,10 +101,10 @@ describe('PermissionRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+            permissionRepository = require("../../app/repository/PermissionRepository").init(sequelize.Permission);
 
             //create table
-            permissionRepository.sync({force: true}).success(function(){
+            permissionRepository.getModel().sync({force: true}).success(function(){
 
                 done();	
 
@@ -148,10 +148,10 @@ describe('PermissionRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+            permissionRepository = require("../../app/repository/PermissionRepository").init(sequelize.Permission);
 
             //create table
-            permissionRepository.sync({force: true}).success(function(){
+            permissionRepository.getModel().sync({force: true}).success(function(){
 
                 done();	
 
@@ -210,10 +210,10 @@ describe('PermissionRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
+            permissionRepository = require("../../app/repository/PermissionRepository").init(sequelize.Permission);
 
             //create table
-            permissionRepository.sync({force: true}).success(function(){
+            permissionRepository.getModel().sync({force: true}).success(function(){
 
                 done();	
 
@@ -233,7 +233,7 @@ describe('PermissionRepository', function () {
 
                 var success = function(success) {
 
-                    permissionRepository.count().success(function(result) {
+                    permissionRepository.getModel().count().success(function(result) {
 
                         result.should.equal(totalRegisters - 1);
                         done();
@@ -259,9 +259,8 @@ describe('PermissionRepository', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            permissionRepository = require("../../app/repository/PermissionRepository")(sequelize.Permission);
-            roleRepository = require("../../app/repository/RoleRepository");
-            roleRepository.init(sequelize.Role);
+            permissionRepository = require("../../app/repository/PermissionRepository").init(sequelize.Permission);
+            roleRepository = require("../../app/repository/RoleRepository").init(sequelize.Role);
 
             var error = function(error) {
                 throw error;
@@ -279,7 +278,7 @@ describe('PermissionRepository', function () {
             };
 
             // Create table
-            permissionRepository.sync({force: true}).success(permissionSyncSuccess).error(error);
+            permissionRepository.getModel().sync({force: true}).success(permissionSyncSuccess).error(error);
         });
 
         it('should find the permissions of a given role', function (done) {
@@ -316,7 +315,7 @@ describe('PermissionRepository', function () {
                         }).error(error);
                     }
 
-                    var permissionEntry = permissionRepository.create(permissionJson)
+                    var permissionEntry = permissionRepository.getModel().create(permissionJson)
                     .success(permissionCreteSuccess).error(error);
                 }
 

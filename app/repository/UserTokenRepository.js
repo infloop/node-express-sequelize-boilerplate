@@ -8,97 +8,106 @@ var randomString = require('randomstring');
 var env = process.env.NODE_ENV || 'development';
 var config = require('../../config/config')[env];
 
-module.exports = function(userTokenModel) {
+var userTokenModelReference;
 
-    /**
-     * Finds a token row by token
-     */
-    userTokenModel.findByToken = function(token, success, error){
-        userTokenModel.find({where: {token: token}}).success(success).error(error);
-    }
+module.exports.init = function(userTokenModel) {
 
-    /**
-     * Finds a token row by token
-     */
-    userTokenModel.findLastValidTokenByUser = function(userId, success, error){
+    userTokenModelReference = userTokenModel;
+    return this;
+}
 
-        var now = new Date().getTime();
+module.exports.getModel = function() {
 
-        userTokenModel.find({
-            where: 
-                {
-                userId: userId,
-                expiration: {
-                    gt: now
-                }
-            },
-        }).success(success).error(error);
-    }
+    return userTokenModelReference;
+}
 
-    /**
-     * Creates a token for an specific userId. It removes all other tokens before.
-     */
-    userTokenModel.createTokenForUser = function(userId, type, success, error){
+/**
+ * Finds a token row by token
+ */
+module.exports.findByToken = function(token, success, error){
+    userTokenModelReference.find({where: {token: token}}).success(success).error(error);
+}
 
-        var successDelete = function(){
-            //then create a new token
-            var timestamp = new Date().getTime();
-            var timeout = config.app.tokenExpiration;
-            var expiration = (timestamp-0)+(timeout-0);
+/**
+ * Finds a token row by token
+ */
+module.exports.findLastValidTokenByUser = function(userId, success, error){
 
-            var rowToInsert = {
-                token : timestamp.toString(),
-                salt  : randomString.generate(10),
-                expiration: expiration,
-                type: type,
-                userId: userId
-            };
+    var now = new Date().getTime();
 
-            //build model
-            var builtModel = userTokenModel.build(rowToInsert);
-            //encrypt token
-            builtModel.setDataValue('token', builtModel.encryptToken(timestamp.toString()));
+    userTokenModelReference.find({
+        where: 
+            {
+            userId: userId,
+            expiration: {
+                gt: now
+            }
+        },
+    }).success(success).error(error);
+}
 
-            builtModel.save().success(success).error(error);
-        }
+/**
+ * Creates a token for an specific userId. It removes all other tokens before.
+ */
+module.exports.createTokenForUser = function(userId, type, success, error){
 
-        //first delete all other tokens of the same type
-        userTokenModel.deleteAllTokensSameType(userId, type, successDelete);
-    }
-
-    userTokenModel.deleteAllTokensSameType = function(userId, type, success, error){
-        
-        var destroy = userTokenModel.destroy({type: type, userId: userId});
-
-        if(success){
-            destroy.success(success);
-        }
-
-        if(error){
-            destroy.error(error);
-        }
-    }
-
-    /**
-     * Updates the expiration date of the token
-     */
-    userTokenModel.updateTokenExpiration = function(token, success, error) {
+    var successDelete = function(){
+        //then create a new token
         var timestamp = new Date().getTime();
         var timeout = config.app.tokenExpiration;
         var expiration = (timestamp-0)+(timeout-0);
 
-        var successUpdate = function(){
-            logger.debug("Token updated successfully");
-        }
+        var rowToInsert = {
+            token : timestamp.toString(),
+            salt  : randomString.generate(10),
+            expiration: expiration,
+            type: type,
+            userId: userId
+        };
 
-        var errorUpdate = function(error){
-            // swallow it?
-            logger.error(error);
-        }
+        //build model
+        var builtModel = userTokenModelReference.build(rowToInsert);
+        //encrypt token
+        builtModel.setDataValue('token', builtModel.encryptToken(timestamp.toString()));
 
-        //update expiration where token = token
-        userTokenModel.update({expiration: expiration}, {token: token}, successUpdate, errorUpdate);
+        builtModel.save().success(success).error(error);
     }
 
-    return userTokenModel;
-};
+    //first delete all other tokens of the same type
+    this.deleteAllTokensSameType(userId, type, successDelete);
+}
+
+module.exports.deleteAllTokensSameType = function(userId, type, success, error){
+
+    var destroy = userTokenModelReference.destroy({type: type, userId: userId});
+
+    if(success){
+        destroy.success(success);
+    }
+
+    if(error){
+        destroy.error(error);
+    }
+}
+
+/**
+ * Updates the expiration date of the token
+ */
+module.exports.updateTokenExpiration = function(token, success, error) {
+
+    var timestamp = new Date().getTime();
+    var timeout = config.app.tokenExpiration;
+    var expiration = (timestamp-0)+(timeout-0);
+
+    var successUpdate = function(){
+        logger.debug("Token updated successfully");
+    }
+
+    var errorUpdate = function(error){
+        // swallow it?
+        logger.error(error);
+    }
+
+    //update expiration where token = token
+    userTokenModelReference.update({expiration: expiration}, {token: token}, successUpdate, errorUpdate);
+}

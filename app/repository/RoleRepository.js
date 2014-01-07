@@ -14,7 +14,6 @@ module.exports.init = function(roleModel) {
 }
 
 module.exports.getModel = function() {
-
     return roleModelReference;
 }
 
@@ -89,7 +88,7 @@ module.exports.updateRole = function(updatedRole, permissionsIdList, success, er
 
         for(var i = 0; i < permissionsIdList.length; i++) {
 
-            var built = permissionRepository.build({ id: permissionsIdList[i] });
+            var built = permissionRepository.getModel().build({ id: permissionsIdList[i] });
             permissionsArray.push(built);
         }
 

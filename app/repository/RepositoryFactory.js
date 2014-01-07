@@ -12,11 +12,11 @@ module.exports.getRepositoryFactory = function() {
     var repositoryFactory = {
 
         getSequelizeRepository: function() {
-            return require("../repository/SequelizeRepository")(appReference.get("models").sequelize);
+            return require("../repository/SequelizeRepository").init(appReference.get("models").sequelize);
         },
 
         getUserRepository: function() {
-            return require("../repository/UserRepository")(appReference.get("models").User);
+            return require("../repository/UserRepository").init(appReference.get("models").User);
         },
 
         getRoleRepository: function() {
@@ -24,11 +24,11 @@ module.exports.getRepositoryFactory = function() {
         },
 
         getPermissionRepository: function() {
-            return require("../repository/PermissionRepository")(appReference.get("models").Permission);
+            return require("../repository/PermissionRepository").init(appReference.get("models").Permission);
         },
 
         getUserTokenRepository: function() {
-            return require("../repository/UserTokenRepository")(appReference.get("models").UserToken);
+            return require("../repository/UserTokenRepository").init(appReference.get("models").UserToken);
         }
     };
 

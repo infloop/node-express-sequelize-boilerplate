@@ -14,10 +14,10 @@ describe('User model', function () {
             sequelize = require("../../app/model");
 
             //connect to in-memory database
-            userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+            userRepository = require("../../app/repository/UserRepository").init(sequelize.User);
 
             //create table
-            userRepository.sync({force: true}).success(function() {
+            userRepository.getModel().sync({force: true}).success(function() {
 
                 done();	
 
@@ -38,7 +38,7 @@ describe('User model', function () {
                 logger.warn(error);
             };
 
-            var one = userRepository.build({
+            var one = userRepository.getModel().build({
 
                 username: 'one',
                 email: 'one@domain.com',
@@ -60,7 +60,7 @@ describe('User model', function () {
                 done();
             };
 
-            var two = userRepository.build({
+            var two = userRepository.getModel().build({
 
                 username: 'one',
                 email: 'two@domain.com',
@@ -83,7 +83,7 @@ describe('User model', function () {
                 done();
             };
 
-            var three = userRepository.build({
+            var three = userRepository.getModel().build({
 
                 username: 'three',
                 email: 'one@domain.com',

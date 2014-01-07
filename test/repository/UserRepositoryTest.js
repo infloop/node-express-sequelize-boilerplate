@@ -23,7 +23,7 @@ describe('UserRepository', function () {
 			throw err;
 		}
 
-		userRepository.bulkCreate(arrayObjs).success(success).error(error);
+		userRepository.getModel().bulkCreate(arrayObjs).success(success).error(error);
 	}
 
 	describe('all method', function () {
@@ -33,10 +33,10 @@ describe('UserRepository', function () {
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			userRepository = require("../../app/repository/UserRepository").init(sequelize.User);
 			
 			//create table
-			userRepository.sync({force: true}).success(function() {
+			userRepository.getModel().sync({force: true}).success(function() {
 				
 				done();	
 
@@ -92,10 +92,10 @@ describe('UserRepository', function () {
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			userRepository = require("../../app/repository/UserRepository").init(sequelize.User);
 			
 			//create table
-			userRepository.sync({force: true}).success(function(){
+			userRepository.getModel().sync({force: true}).success(function(){
 				
 				done();	
 
@@ -140,10 +140,10 @@ describe('UserRepository', function () {
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			userRepository = require("../../app/repository/UserRepository").init(sequelize.User);
 			
 			//create table
-			userRepository.sync({force: true}).success(function(){
+			userRepository.getModel().sync({force: true}).success(function(){
 				
 				done();	
 
@@ -188,10 +188,10 @@ describe('UserRepository', function () {
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			userRepository = require("../../app/repository/UserRepository").init(sequelize.User);
 			
 			//create table
-			userRepository.sync({force: true}).success(function() {
+			userRepository.getModel().sync({force: true}).success(function() {
 				done();	
 
 			}).error(function(error) {
@@ -228,7 +228,7 @@ describe('UserRepository', function () {
                     throw error;
                 };
 
-                userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+                userRepository = require("../../app/repository/UserRepository").init(sequelize.User);
                 var id = 2;
 
                 var updatedUser = {
@@ -251,10 +251,10 @@ describe('UserRepository', function () {
 			sequelize = require("../../app/model");
 
 			//connect to in-memory database
-			userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+			userRepository = require("../../app/repository/UserRepository").init(sequelize.User);
 			
 			//create table
-			userRepository.sync({force: true}).success(function() {
+			userRepository.getModel().sync({force: true}).success(function() {
 				done();	
 
 			}).error(function(error) {
@@ -270,7 +270,7 @@ describe('UserRepository', function () {
 
                 var success = function(success) {
 
-                    userRepository.count().success(function(result) {
+                    userRepository.getModel().count().success(function(result) {
 
                         result.should.equal(numeroUsuarios - 1);
                         done();
@@ -281,7 +281,7 @@ describe('UserRepository', function () {
                     throw error;
                 };
 
-                userRepository = require("../../app/repository/UserRepository")(sequelize.User);
+                userRepository = require("../../app/repository/UserRepository").init(sequelize.User);
                 var id = 2;
                 userRepository.deleteById(id, success, error);
             };
